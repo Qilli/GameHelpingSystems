@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8eaf689ca8f3bba41b941208ad39d512, type: 3}
+  m_Name: LogActionTask
+  m_EditorClassIdentifier: 
+  taskType: 0
+  children: []
+  useAsTaskSourceEditor: 1
+  editorTexture: {fileID: 2800000, guid: 386ff5ab1e36310419bdf2eee49197cd, type: 3}
+  taskTypeName: Log Message
+  description: Simple log a message to console
+  rect:
+    serializedVersion: 2
+    x: 20
+    y: 20
+    width: 100
+    height: 100
+  messageToLog: Log Message
