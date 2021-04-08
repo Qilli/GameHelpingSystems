@@ -8,6 +8,7 @@ namespace Base
     {
         //objects
         [Header("Game Systems")]
+        public Cameras.CamerasManager camerasMgr;
         public AudioController audioController;
         public Base.AI.Behaviours.BehaviourTreesManager behaviourTreesMgr;
         public GameSystem gameSystem;      

@@ -47,7 +47,7 @@ MonoBehaviour:
   mgr: {fileID: 11400000, guid: f0adbc740ccb27d44af1e33967c7550a, type: 2}
   priority: 10
   inited: 0
-  settings: {fileID: 11400000, guid: a2a366f322f0a274b85cb318ac1e929c, type: 2}
+  settings: {fileID: 11400000, guid: 5e49cb1f054d14d4a8bcad77ca21ac11, type: 2}
   timePauseStarted: 0
 --- !u!1 &582372140693501104
 GameObject:
@@ -81,6 +81,7 @@ Transform:
   - {fileID: 582372140724956173}
   - {fileID: 582372140781924940}
   - {fileID: 582372141226173072}
+  - {fileID: 7125961402403786456}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -225,6 +226,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e278a8118dea5c843a4324dd75eeebdb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  camerasMgr: {fileID: 4578018004422590098}
   audioController: {fileID: 582372140212485317}
   behaviourTreesMgr: {fileID: 582372141226173075}
   gameSystem: {fileID: 582372140724956172}
@@ -274,4 +276,51 @@ MonoBehaviour:
   state: 0
   mgr: {fileID: 11400000, guid: 3c2f1769e27853b4e9ed7e6a30e88c1e, type: 2}
   priority: 1
+  inited: 0
+--- !u!1 &8820168732385011331
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 7125961402403786456}
+  - component: {fileID: 4578018004422590098}
+  m_Layer: 0
+  m_Name: CameraManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &7125961402403786456
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8820168732385011331}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 582372140693501107}
+  m_RootOrder: 5
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &4578018004422590098
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8820168732385011331}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3c1a3230bea583b41afa35a092000641, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  state: 0
+  mgr: {fileID: 11400000, guid: a72d20d3a4923014695bf34449183f09, type: 2}
+  priority: 10
   inited: 0
