@@ -1,7 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using PDollarGestureRecognizer;
 namespace Base.Gestures
 {
     public abstract class GesturePointsInput
@@ -19,8 +19,13 @@ namespace Base.Gestures
         public float timeSpan = 0.0f;
         private float timer = 0;
 
+        public Point LastAddedPoint
+        {
+            get { return gesturePoints.LastAddedPoint; }
+        }
 
-        public List<Vector3> getPoints() { return gesturePoints.getPoints(); }
+
+        public List<Point> getPoints() { return gesturePoints.getPoints(); }
 
         public virtual void resetRecording()
         {
@@ -32,19 +37,20 @@ namespace Base.Gestures
             return gesturePoints.getState() == GesturePoints.State.COLLECTING;
         }
 
-        public virtual void onUpdate(float delta)
+        public virtual bool onUpdate(float delta)
         {
             GesturePoints.State currentState = gesturePoints.getState();
             if (currentState == GesturePoints.State.EMPTY)
             {
                 //no gesture recognizing on, return
-                return;
+                return false;
             }
             else if (currentState == GesturePoints.State.COLLECTING)
             {
                 if (recordType == InputRecordingType.EVERY_FRAME)
                 {
                     gesturePoints.addNewPoint(getNewPoint());
+                    return true;
                 }
                 else
                 {
@@ -53,18 +59,19 @@ namespace Base.Gestures
                     {
                         delta = 0;
                         gesturePoints.addNewPoint(getNewPoint());
-                    }
+                        return true;
+                    }return false;
                 }
             }
             else if (currentState == GesturePoints.State.PAUSED)
             {
-                return;
+                return false;
             }
             else if (currentState == GesturePoints.State.END)
             {
-                return;
+                return false;
             }
-
+            return false;
         }
 
         public virtual void startRecording()
@@ -76,6 +83,6 @@ namespace Base.Gestures
         {
             gesturePoints.setStateAsReady();
         }
-        public abstract Vector3 getNewPoint();
+        public abstract Point getNewPoint();
     }
 }
