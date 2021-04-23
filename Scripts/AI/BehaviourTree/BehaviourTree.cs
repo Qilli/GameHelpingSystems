@@ -15,6 +15,9 @@ namespace Base.AI.Behaviours
         //Geters
         public IEnumerable<BehaviourTreeTask> GetNodes() { return nodes; }
         public BehaviourTreeTask getRootNode() { return nodes[0]; }
+        //every BT needs a bilboard to keep shared variables
+        [SerializeField]
+        private Blackboard blackboard= new Blackboard();
 
 #if UNITY_EDITOR
         private void Awake()
@@ -28,34 +31,16 @@ namespace Base.AI.Behaviours
 
         #region GAMEPLAY
 
-        public virtual void init()
+        public Blackboard Blackboard
         {
-            for(int a=0;a<nodes.Count;++a)
+            get
             {
-                nodes[a].TaskIndex = a;
+                return blackboard;
             }
         }
 
-        public virtual TaskResult stepTree(BehaviourTreeController controller, float timeStep)
+        public virtual void init()
         {
-            //take first element from the stack
-            BehaviourTreeController.TreeStatus status = controller.getTreeIterator();
-
-            if(status.lastResult== TaskResult.RUNNING && status.fullTreeTraversalOnRunning==false)
-            {
-                //dont clear cache and step through tree
-                status.lastResult = nodes[0].run(controller.getTreeIterator());
-                return status.lastResult;
-            }
-            else
-            {
-                //clear cache result
-                status.clearCacheResult();
-                //do a tree traversal
-                status.lastResult = nodes[0].run(controller.getTreeIterator());
-                return status.lastResult;
-            }
-
         }
 
         #endregion
@@ -63,21 +48,11 @@ namespace Base.AI.Behaviours
 
 
         /// <summary>
-        /// get all actions from BehaviourTree definition for controller instance
+        /// generate runtime nodes from SO definitions
         /// </summary>
-        /// <param name="actionsList"></param>
-        public void getAllActions(List<BehaviourTreeController.ActionElement> actionsList)
+        public BehaviourTreeTaskRuntime generateRuntimeNodes(BehaviourTreeController runtimeControler)
         {
-            // we choose elements and their indexes
-            for(int a=0;a<nodes.Count;a++)
-            {
-                if(nodes[a].taskType == TaskType.ACTION)
-                {
-                    BehaviourTreeController.ActionElement temp = new BehaviourTreeController.ActionElement();
-                    temp.task= Instantiate(nodes[a]) as ActionTreeTask;
-                    temp.id = a;
-                }
-            }
+            return nodes[0].getRuntimeTask(runtimeControler,null);
         }
 
         /// <summary>
@@ -145,6 +120,7 @@ namespace Base.AI.Behaviours
         private void AddNode(BehaviourTreeTask newNode)
         {
             nodes.Add(newNode);
+            newNode.treeOwner = this;
             OnValidate();
         }
 
@@ -222,6 +198,7 @@ namespace Base.AI.Behaviours
                         AssetDatabase.AddObjectToAsset(n,this);
                     }
                 }
+
             }
 #endif
         }

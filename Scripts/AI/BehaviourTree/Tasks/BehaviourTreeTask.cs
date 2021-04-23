@@ -24,32 +24,12 @@ namespace Base.AI.Behaviours
 
     public class BehaviourTreeTask : ScriptableObject
     {
-        //for bt editor
-        [HideInInspector]
-        private int index;
+        public BehaviourTree treeOwner;
         public TaskType taskType;  
         public List<BehaviourTreeTask> children = new List<BehaviourTreeTask>();
         public BehaviourTreeTask parent = null;
         public bool useAsTaskSourceEditor = false;
 
-        public virtual TaskResult run(BehaviourTreeController.TreeStatus controller)
-        {
-            return TaskResult.SUCCESS;
-        }
-
-        public int TaskIndex
-        {
-            set
-            {
-                index = value;
-            }
-            get { return index; }
-        }
-
-        protected bool hasReadyResult(BehaviourTreeController.TreeStatus controller)
-        {
-            return controller.executeStack[TaskIndex] != TaskResult.NONE && controller.executeStack[TaskIndex] != TaskResult.RUNNING && controller.fullTreeTraversalOnRunning==false ;
-        }
 
         //EDITOR THINGS
         [Header("EDITOR")]
@@ -59,6 +39,13 @@ namespace Base.AI.Behaviours
         private string description;
         [SerializeField]
         private Rect rect = new Rect(20, 20, 100, 100);
+
+        public virtual BehaviourTreeTaskRuntime getRuntimeTask(BehaviourTreeController runtimeController,BehaviourTreeTaskRuntime parent = null)
+        {
+            BehaviourTreeTaskRuntime rn = new BehaviourTreeTaskRuntime();
+            rn.type = TaskType.ROOT;
+            return rn;
+        }
 
         //node description
         public string NodeDescription
@@ -146,6 +133,36 @@ namespace Base.AI.Behaviours
 
 
 
+    }
+
+    public class BehaviourTreeTaskRuntime
+    {
+        public TaskResult lastResult;
+        public TaskType type;
+        public List<BehaviourTreeTaskRuntime> children = new List<BehaviourTreeTaskRuntime>();
+        public BehaviourTreeTaskRuntime parent = null;
+
+        public virtual TaskResult run(BehaviourTreeController.TreeStatus controller)
+        {
+            return TaskResult.SUCCESS;
+        }
+
+        public virtual void setLastResult(TaskResult newResult, bool clearChildren=false)
+        {
+            lastResult = newResult;
+            if(clearChildren)
+            {
+                foreach(BehaviourTreeTaskRuntime child in children)
+                {
+                    child.setLastResult(newResult,clearChildren);
+                }
+            }
+        }
+
+        protected bool hasReadyResult(BehaviourTreeController.TreeStatus controller)
+        {
+            return lastResult != TaskResult.NONE && lastResult != TaskResult.RUNNING && controller.fullTreeTraversalOnRunning == false;
+        }
     }
 
 

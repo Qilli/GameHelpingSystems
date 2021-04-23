@@ -1,8 +1,10 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using UnityEditor;
 using UnityEditor.Callbacks;
 using UnityEngine;
+using System.Linq;
+using System.Reflection;
 
 
 namespace Base.AI.Behaviours.Editor
@@ -11,6 +13,8 @@ namespace Base.AI.Behaviours.Editor
     {
         [NonSerialized]
         private BehaviourTree selectedBehaviour = null;
+        [NonSerialized]
+        private BehaviourTreeController runtimeController = null;
         [NonSerialized]
         private GUIStyle nodeStyle;
         [NonSerialized]
@@ -54,6 +58,14 @@ namespace Base.AI.Behaviours.Editor
         private List<BehaviourTreeTask> behaviourTasks = new List<BehaviourTreeTask>();
         private List<CompositeTreeTask> behaviourTasks_Composite = new List<CompositeTreeTask>();
         private List<ActionTreeTask> behaviourTasks_Actions = new List<ActionTreeTask>();
+        private List<SharedVariable> allSharedVariablesTypes = new List<SharedVariable>();
+        private string[] sharedVariablesNamesArray;
+        [NonSerialized]
+        private int currentlySelectedParameterType = 0;
+        [NonSerialized]
+        private string newSharedVariableName = "NewVariable";
+        [NonSerialized]
+        private List<string> sharedVariablesToRemove = new List<string>();
 
         [MenuItem("Window/Behaviour Editor")]
         public static void ShowEditorWindow()
@@ -90,8 +102,8 @@ namespace Base.AI.Behaviours.Editor
             nodeStyle.border = new RectOffset(10, 10, 10, 10);
             onSelectionChanged();
 
-            //get all tasks
             getAllTasks();
+            getAllSharedVariables();
         }
 
         private void OnGUI()
@@ -143,7 +155,6 @@ namespace Base.AI.Behaviours.Editor
             List<CompositeTreeTask> allData = Base.CommonCode.Common.FindAssetsByType<CompositeTreeTask>();
             behaviourTasks_Composite.Clear();
             behaviourTasks_Actions.Clear();
-
             foreach (CompositeTreeTask t in allData)
             {
                 if (t.useAsTaskSourceEditor)
@@ -151,7 +162,6 @@ namespace Base.AI.Behaviours.Editor
                     behaviourTasks_Composite.Add(t);
                 }
             }
-
             foreach (BehaviourTreeTask t in behaviourTasks)
             {
                 ActionTreeTask current = t as ActionTreeTask;
@@ -160,8 +170,46 @@ namespace Base.AI.Behaviours.Editor
                     behaviourTasks_Actions.Add(current);
                 }
             }
+        }
 
-            // Debug.Log($"found: {behaviourTasks_Composite.Count} tasks");
+        private bool tryAddNewParameterToBlackboard(string name, int type)
+        {
+            if(!selectedBehaviour.Blackboard.alreadyContains(name))
+            {
+                SharedVariable newVariable = Activator.CreateInstance(allSharedVariablesTypes[type].GetType()) as SharedVariable;
+                return selectedBehaviour.Blackboard.addNewVariable(name, newVariable);
+            }return false;
+        }
+
+      /*  IEnumerable<BaseClass> GetAll()
+        {
+            return AppDomain.CurrentDomain.GetAssemblies()
+                .SelectMany(assembly => assembly.GetTypes())
+                .Where(type => type.IsSubclassOf(typeof(BaseClass)))
+                .Select(type => Activator.CreateInstance(type) as BaseClass);
+        }*/
+
+        private void getAllSharedVariables()
+        {
+            Assembly[] assemblies=AppDomain.CurrentDomain.GetAssemblies();
+            foreach(Assembly asm in assemblies)
+            {
+                foreach(Type t in asm.GetTypes())
+                {
+                    if(t.IsSubclassOf(typeof(SharedVariable)) && t.IsGenericType==false)
+                    {
+                        SharedVariable sv = Activator.CreateInstance(t) as SharedVariable;
+                      allSharedVariablesTypes.Add(sv);
+                    }
+                }
+            }
+
+            sharedVariablesNamesArray = new string[allSharedVariablesTypes.Count];
+            int counter = 0;
+            foreach(SharedVariable sv in allSharedVariablesTypes)
+            {
+                sharedVariablesNamesArray[counter++] = sv.typeName;
+            }
         }
 
         #region ZOOM UI
@@ -327,6 +375,12 @@ namespace Base.AI.Behaviours.Editor
             else if(selectedInspector == InspectorType.INSPECTOR)
             {
                 onDrawInspectorPanel();
+                EditorUtility.SetDirty(selectedBehaviour);
+            }
+            else if(selectedInspector == InspectorType.PARAMETERS)
+            {
+                onDrawParametersPanel();
+                EditorUtility.SetDirty(selectedBehaviour);
             }
 
             GUILayout.EndVertical();
@@ -335,11 +389,107 @@ namespace Base.AI.Behaviours.Editor
 
         }
 
+        private void onDrawParametersPanel()
+        {
+            GUILayout.BeginVertical();
+            GUILayout.Label("Global Parameters");
+            drawAddNewSharedVariablePanel();
+            drawSharedVariablesList();
+            GUILayout.EndVertical();
+        }
+        private void drawSharedVariablesList()
+        {
+            GUILayout.BeginVertical();
+            EditorGUILayout.LabelField("", GUI.skin.horizontalScrollbar);
+            sharedVariablesToRemove.Clear();
+            foreach (SharedVariable sv in selectedBehaviour.Blackboard.getAllSharedVariables())
+            {
+                drawSingleSharedVariable(sv);
+            }
+
+            GUILayout.EndVertical();
+
+            //check if we have any to erase
+            foreach(string elem in sharedVariablesToRemove)
+            {
+                selectedBehaviour.Blackboard.removeVariableByName(elem);
+            }
+        }
+        private void drawSingleSharedVariable(SharedVariable sv)
+        {
+            GUILayout.BeginHorizontal();
+            GUILayout.Label(sv.name);
+            drawSharedVariableInput(sv);
+            if(GUILayout.Button("X",GUILayout.Width(20),GUILayout.Height(20)))
+            {
+                sharedVariablesToRemove.Add(sv.name);
+            }
+            GUILayout.EndHorizontal();
+        }
+
+        private void drawSharedVariableInput(SharedVariable sv)
+        {
+            if(sv.type == SharedVariable.SharedType.TRANSFORM)
+            {
+                SharedTransform sv_transform = sv as SharedTransform;
+                sv_transform.value=EditorGUILayout.ObjectField(sv_transform.value, typeof(Transform), false) as Transform;
+            }
+            else if(sv.type == SharedVariable.SharedType.STRING)
+            {
+                SharedString sv_string = sv as SharedString;
+                sv_string.value = GUILayout.TextField(sv_string.value);
+            }
+            else if(sv.type == SharedVariable.SharedType.GAMEOBJECT)
+            {
+                SharedGameObject sv_gameobject = sv as SharedGameObject;
+                sv_gameobject.value = EditorGUILayout.ObjectField(sv_gameobject.value, typeof(GameObject), false) as GameObject;
+            }
+            else if(sv.type == SharedVariable.SharedType.FLOAT)
+            {
+                SharedFloat sv_float = sv as SharedFloat;
+                sv_float.value = EditorGUILayout.FloatField(sv_float.value);
+            }
+            else if(sv.type == SharedVariable.SharedType.INT)
+            {
+                SharedInt sv_integer = sv as SharedInt;
+                sv_integer.value = EditorGUILayout.IntField(sv_integer.value);
+            }
+            else if (sv.type == SharedVariable.SharedType.BOOL)
+            {
+                SharedBool sv_bool = sv as SharedBool;
+                sv_bool.value = EditorGUILayout.Toggle(sv_bool.value);
+            }
+        }
+
+        private void drawAddNewSharedVariablePanel()
+        {
+            GUILayout.BeginHorizontal();
+            //type of shared variable
+            GUILayout.Label("New param: ");
+            currentlySelectedParameterType = EditorGUILayout.Popup(currentlySelectedParameterType, sharedVariablesNamesArray);
+            newSharedVariableName=GUILayout.TextField(newSharedVariableName,GUILayout.MinWidth(100));
+            if(GUILayout.Button("Add"))
+            {
+                if(!tryAddNewParameterToBlackboard(newSharedVariableName,currentlySelectedParameterType))
+                {
+                    this.ShowNotification(new GUIContent("Parametr with specifed name already exist!"));
+                }
+            }
+            GUILayout.EndHorizontal();
+        }
         private void onDrawInspectorPanel()
         {
             if (selectedNode == null) return;
             if (selectedNode.taskType == TaskType.ACTION)
             {
+                ActionTreeTask actionTask = selectedNode as ActionTreeTask;
+                if (actionTask != null && selectedSerializedAction==null)
+                {
+                    //create serialized object for editor modification
+                    selectedSerializedAction = new SerializedObject(selectedNode);
+                    selectedSerializedAction.Update();
+                }
+
                 selectedSerializedAction.Update();
                 ActionTreeTask task = selectedNode as ActionTreeTask;
                 currentProperties = task.getAllProperties(selectedSerializedAction);
@@ -359,7 +509,6 @@ namespace Base.AI.Behaviours.Editor
                 GUILayout.Label("Selected node isn't an action node");
             }
         }
-
         private void drawTreeArea()
         {
             //   scrollPosition = GUILayout.BeginScrollView(scrollPosition, true, true);
@@ -593,6 +742,19 @@ namespace Base.AI.Behaviours.Editor
             {
                 selectedBehaviour = behaviour;
                 Repaint();
+            }
+            else
+            {
+                GameObject obj = Selection.activeObject as GameObject;
+                if(obj)
+                {
+                    BehaviourTreeController controler = obj.GetComponent<BehaviourTreeController>();
+                    if(controler!=null)
+                    {
+                        selectedBehaviour = controler.source;
+                        runtimeController = controler;
+                    }
+                }
             }
         }
     }
