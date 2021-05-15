@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
+using System;
 
 namespace Base.AI.Behaviours
 {
@@ -22,8 +23,9 @@ namespace Base.AI.Behaviours
         ROOT
     }
 
-    public class BehaviourTreeTask : ScriptableObject
+    public class BehaviourTreeTask : ScriptableObject, System.IComparable<BehaviourTreeTask>
     {
+        //gameplay data
         public BehaviourTree treeOwner;
         public TaskType taskType;  
         public List<BehaviourTreeTask> children = new List<BehaviourTreeTask>();
@@ -47,6 +49,12 @@ namespace Base.AI.Behaviours
             return rn;
         }
 
+        public int CompareTo(BehaviourTreeTask other)
+        {
+            if (this.rect.min.x < other.rect.min.x) return 1;
+            else return -1;
+        }
+
         //node description
         public string NodeDescription
         {
@@ -62,7 +70,6 @@ namespace Base.AI.Behaviours
 #endif  
             }
         }
-
         //Change and get node rect
         public Rect NodeRect
         {
@@ -82,7 +89,6 @@ namespace Base.AI.Behaviours
 #endif 
             }
         }
-
         //get and modify children
         public List<BehaviourTreeTask> NodeChildren
         {
@@ -91,7 +97,6 @@ namespace Base.AI.Behaviours
                 return children;
             }
         }
-
         public bool isChildOf(BehaviourTreeTask linkingNode)
         {
             return linkingNode.children.Contains(this);
@@ -129,9 +134,8 @@ namespace Base.AI.Behaviours
             }
             return current;
         }
+
 #endif
-
-
 
     }
 

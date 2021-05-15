@@ -28,15 +28,16 @@ namespace Base.AI.Agents
 
         public static float DirectionToOrientation(Vector3 direction)
         {
-            return Mathf.Atan2(-direction.x, direction.z);
+            return Mathf.Atan2(direction.x, direction.z)*Mathf.Rad2Deg;
         }
 
-        public static Vector3 OrientationToDirection(float orientation)
+        public static Vector3 OrientationToDirection(float orientation)    
         {
-            return new Vector3(Mathf.Deg2Rad * orientation, 0, Mathf.Deg2Rad * orientation);
+            return new Vector3(Mathf.Sin(orientation*Mathf.Deg2Rad), 0, Mathf.Cos(orientation * Mathf.Deg2Rad));
         }
     }
     [RequireComponent(typeof(Rigidbody))]
+    [RequireComponent(typeof(AIAttackSystem))]
     public class AIAgent : Base.ObjectsControl.BaseObject
     {
 
@@ -46,6 +47,10 @@ namespace Base.AI.Agents
         {
             get => agentKinematicData;
         }
+        //gameplaySystem
+        public AIAttackSystem attackSystem;
+
+        
         public override void init()
         {
             base.init();
@@ -56,13 +61,12 @@ namespace Base.AI.Agents
                 inited = true;
             }
         }
-
         public virtual void updateSteering()
         {
-            rigid.velocity = agentKinematicData.velocity;
-            transform.localEulerAngles = KinematicData.OrientationToDirection(agentKinematicData.orientation);
+            rigid.MovePosition(agentKinematicData.position+agentKinematicData.velocity*Time.fixedDeltaTime);
+            transform.localEulerAngles = new Vector3(0,agentKinematicData.orientation,0);
+            agentKinematicData.position = transform.position;
         }
-
         public override void onFixedUpdate(float fixedDelta)
         {
             base.onFixedUpdate(fixedDelta);

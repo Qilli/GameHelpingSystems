@@ -4,14 +4,14 @@ using UnityEngine;
 
 namespace Base.AI.Behaviours
 {
-    [CreateAssetMenu(fileName = "SequenceTreeTask", menuName = "Sequence", order = 51)]
-    public class SequenceTreeTask : CompositeTreeTask
+    [CreateAssetMenu(fileName = "ParallelORTreeTask", menuName = "ParallelOR", order = 51)]
+    public class ParallelORTreeTask : CompositeTreeTask
     {
 
         public override BehaviourTreeTaskRuntime getRuntimeTask(BehaviourTreeController runtimeController, BehaviourTreeTaskRuntime parent = null)
         {
             children.Sort();
-            SequenceTreeTaskRuntime rn = new SequenceTreeTaskRuntime();
+            ParallelORTreeTaskRuntime rn = new ParallelORTreeTaskRuntime();
             rn.type = TaskType.COMPOSITE;
             rn.parent = parent;
             foreach (BehaviourTreeTask child in children)
@@ -22,22 +22,23 @@ namespace Base.AI.Behaviours
         }
     }
 
-    public class SequenceTreeTaskRuntime: BehaviourTreeTaskRuntime
+    public class ParallelORTreeTaskRuntime: BehaviourTreeTaskRuntime
     {
         public override TaskResult run(BehaviourTreeController.TreeStatus controller)
         {
             if (hasReadyResult(controller)) return lastResult;
+            bool hasSuccess = false;
+            bool hasRunning = false;
             foreach (BehaviourTreeTaskRuntime t in children)
             {
                 TaskResult result = t.run(controller);
-                if (result != TaskResult.SUCCESS)
-                {
-                    lastResult = result;
-                    return result;
-                }
+                if (result == TaskResult.SUCCESS) hasSuccess = true;
+                else if (result == TaskResult.RUNNING) hasRunning = true;
             }
-            lastResult = TaskResult.SUCCESS;
-            return TaskResult.SUCCESS;
+            if (hasRunning) lastResult = TaskResult.RUNNING;
+            else if (hasSuccess) lastResult = TaskResult.SUCCESS;
+            else lastResult = TaskResult.FAIL;
+            return lastResult;
         }
     }
 

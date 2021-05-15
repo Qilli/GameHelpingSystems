@@ -11,7 +11,8 @@ namespace Base
         public Cameras.CamerasManager camerasMgr;
         public AudioController audioController;
         public Base.AI.Behaviours.BehaviourTreesManager behaviourTreesMgr;
-        public GameSystem gameSystem;      
+        public GameSystem gameSystem;
+        public Events.EventsManager eventsManager;
         private static GlobalDataContainer container = null;
 
         public static GlobalDataContainer It

@@ -9,6 +9,7 @@ namespace Base.AI.Behaviours
     {
         public override BehaviourTreeTaskRuntime getRuntimeTask(BehaviourTreeController runtimeController, BehaviourTreeTaskRuntime parent=null)
         {
+            children.Sort();
             SelectorTreeTaskRuntime rn = new SelectorTreeTaskRuntime();
             rn.type = TaskType.COMPOSITE;
             rn.parent = parent;

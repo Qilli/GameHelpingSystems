@@ -11,6 +11,7 @@ namespace Base.AI.Behaviours
         public enum SharedType
         {
             GAMEOBJECT,
+            OBJECT,
             TRANSFORM,
             FLOAT,
             INT,
@@ -60,6 +61,15 @@ namespace Base.AI.Behaviours
         {
             type = SharedVariable<int>.SharedType.GAMEOBJECT;
             typeName = "GameObject";
+        }
+    }
+    [System.Serializable]
+    public class SharedObject : SharedVariable<Object>
+    {
+        public SharedObject()
+        {
+            type = SharedVariable<int>.SharedType.OBJECT;
+            typeName = "Object";
         }
     }
     [System.Serializable]

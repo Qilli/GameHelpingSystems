@@ -42,8 +42,11 @@ namespace Base.AI.Behaviours.Editor
             var nameRect = new Rect(position.x, position.y, 150, position.height);
             //choose from possible list
             int newIndex=EditorGUI.Popup(nameRect, selectedIndex, possibleNames);
-            sharedVariable.name = possibleNames[newIndex];
-            selectedIndex = newIndex;
+            if(possibleNames.Length>0)
+                {
+                sharedVariable.name = possibleNames[newIndex];
+                selectedIndex = newIndex;
+            }
 
 
             // Set indent back to what it was

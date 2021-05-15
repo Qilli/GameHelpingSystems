@@ -54,6 +54,10 @@ namespace Base.AI.Behaviours.Editor
         private BehaviourTreeTask selectedNode = null;
         private enum InspectorType { INSPECTOR, TASKS, PARAMETERS };
         [NonSerialized]
+        private bool reparenting = false;
+        [NonSerialized]
+        private BehaviourTreeTask selectedForReparenting = null;
+        [NonSerialized]
         private InspectorType selectedInspector = InspectorType.INSPECTOR;
         private List<BehaviourTreeTask> behaviourTasks = new List<BehaviourTreeTask>();
         private List<CompositeTreeTask> behaviourTasks_Composite = new List<CompositeTreeTask>();
@@ -316,9 +320,46 @@ namespace Base.AI.Behaviours.Editor
                 if(GUI.Button(buttonRect, "x"))
                 {
                     //delete node
-                    //selectedBehaviour.deleteNode(node);
-                    nodeToRemove = node;
+                   if(!reparenting) nodeToRemove = node;
                 }
+                //draw option for reparenting
+                Rect reparentRect = new Rect(nodeRectFull.x - 10.0f + nodeRectFull.width * 0.8f, nodeRectFull.y + nodeRectFull.height * 0.7f, 20.0f, 20.0f);
+                if (reparenting)
+                {
+                    if(selectedForReparenting == node)
+                    {
+                        var oldColor = GUI.backgroundColor;
+                        GUI.backgroundColor = Color.red;
+                        if (GUI.Button(reparentRect, "R"))
+                        {
+                            reparenting = false;
+                            selectedForReparenting = null;
+                        }
+                        GUI.backgroundColor = oldColor;         
+                    }
+                    else
+                    {
+                        var oldColor = GUI.backgroundColor;
+                        GUI.backgroundColor = Color.green;
+                        if (GUI.Button(reparentRect, "R"))
+                        {
+                            BehaviourTree.Reparent(node, selectedForReparenting);
+                            reparenting = false;
+                            selectedForReparenting = null;
+                        }
+                        GUI.backgroundColor = oldColor;
+
+                    }
+                }
+                else
+                {
+                    if (GUI.Button(reparentRect, "R"))
+                    {
+                        reparenting = true;
+                        selectedForReparenting = node;
+                    }
+                }
+
             }
 
             GUI.backgroundColor = lastColor;
@@ -444,6 +485,11 @@ namespace Base.AI.Behaviours.Editor
                 SharedGameObject sv_gameobject = sv as SharedGameObject;
                 sv_gameobject.value = EditorGUILayout.ObjectField(sv_gameobject.value, typeof(GameObject), false) as GameObject;
             }
+            else if (sv.type == SharedVariable.SharedType.OBJECT)
+            {
+                SharedObject sv_object = sv as SharedObject;
+                sv_object.value = EditorGUILayout.ObjectField(sv_object.value, typeof(UnityEngine.Object), false) as UnityEngine.Object;
+            }
             else if(sv.type == SharedVariable.SharedType.FLOAT)
             {
                 SharedFloat sv_float = sv as SharedFloat;
@@ -521,6 +567,10 @@ namespace Base.AI.Behaviours.Editor
             foreach (BehaviourTreeTask node in selectedBehaviour.GetNodes())
             {
                 DrawConnections(node);
+            }
+
+            foreach (BehaviourTreeTask node in selectedBehaviour.GetNodes())
+            {
                 DrawNode(node);
             }
 

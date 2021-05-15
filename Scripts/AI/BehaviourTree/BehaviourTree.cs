@@ -30,7 +30,6 @@ namespace Base.AI.Behaviours
         }
 
         #region GAMEPLAY
-
         public Blackboard Blackboard
         {
             get
@@ -150,6 +149,14 @@ namespace Base.AI.Behaviours
             }
 
             return newNode;
+        }
+
+        //Change parent of parentFor for a newParent, clear all old connections
+        public static void Reparent(BehaviourTreeTask newParent,BehaviourTreeTask parentFor)
+        {
+            parentFor.parent.removeChildConnection(parentFor);
+            parentFor.parent = newParent;
+            newParent.addNewChild(parentFor);
         }
 
         /// <summary>

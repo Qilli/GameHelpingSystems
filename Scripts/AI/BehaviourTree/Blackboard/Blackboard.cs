@@ -106,6 +106,8 @@ namespace Base.AI.Behaviours
             if (result != null) return result;
             result = serializer.sharedTransforms.Find(x => x.name == name);
             if (result != null) return result;
+            result = serializer.sharedObjects.Find(x => x.name == name);
+            if (result != null) return result;
             return result;
         }
 
@@ -113,6 +115,7 @@ namespace Base.AI.Behaviours
         {
             if (sv.type == SharedVariable.SharedType.FLOAT) serializer.sharedFloats.Add((SharedFloat)sv);
             else if (sv.type == SharedVariable.SharedType.GAMEOBJECT) serializer.sharedGameObjects.Add((SharedGameObject)sv);
+            else if (sv.type == SharedVariable.SharedType.OBJECT) serializer.sharedObjects.Add((SharedObject)sv);
             else if (sv.type == SharedVariable.SharedType.INT) serializer.sharedInts.Add((SharedInt)sv);
             else if (sv.type == SharedVariable.SharedType.STRING) serializer.sharedStrings.Add((SharedString)sv);
             else if (sv.type == SharedVariable.SharedType.TRANSFORM) serializer.sharedTransforms.Add((SharedTransform)sv);
@@ -128,6 +131,7 @@ namespace Base.AI.Behaviours
         public List<SharedFloat> sharedFloats = new List<SharedFloat>();
         public List<SharedString> sharedStrings = new List<SharedString>();
         public List<SharedGameObject> sharedGameObjects = new List<SharedGameObject>();
+        public List<SharedObject> sharedObjects = new List<SharedObject>();
         public List<SharedBool> sharedBools = new List<SharedBool>();
 
         public void clear()
@@ -139,6 +143,7 @@ namespace Base.AI.Behaviours
             sharedStrings.Clear();
             sharedGameObjects.Clear();
             sharedBools.Clear();
+            sharedObjects.Clear();
         }
     }
 }

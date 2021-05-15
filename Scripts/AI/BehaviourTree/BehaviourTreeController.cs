@@ -11,6 +11,7 @@ namespace Base.AI.Behaviours
         {
             public TaskResult lastResult= TaskResult.SUCCESS;
             public bool fullTreeTraversalOnRunning = false;
+            public AI.Agents.AIAgent agent;
         }
 
         public class ActionElement
@@ -56,6 +57,7 @@ namespace Base.AI.Behaviours
                 blackboard = source.Blackboard.getCopy();
                 rootNode=source.generateRuntimeNodes(this);
                 clearLastResults();
+                currentStatusIterator.agent = agent;
             }
         }
 
