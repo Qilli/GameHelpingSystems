@@ -7,7 +7,6 @@ using UnityEditor.Animations;
 
 namespace Base.CommonCode
 {
-
     public class Recorder : MonoBehaviour
     {
         public AnimationClip clip;
@@ -43,11 +42,12 @@ namespace Base.CommonCode
             }
         }
     }
+}
 #else
-public class Recorder : MonoBehaviour
+namespace Base.CommonCode
+{
+    public class Recorder : MonoBehaviour
 {
 }
-#endif
-
-
 }
+#endif

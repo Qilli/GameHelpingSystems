@@ -71,11 +71,12 @@ namespace Base.AI.Behaviours
 
             //still need to move
             Vector3 velocity = dir.normalized * speed;
+            Debug.DrawLine(controller.agent.AgentKinematics.position,
+            controller.agent.AgentKinematics.position+velocity,Color.red,0.1f);
             //we need to look at our target, force it on instant
             controller.agent.AgentKinematics.velocity = velocity;
             controller.agent.AgentKinematics.orientation = Base.AI.Agents.KinematicData.DirectionToOrientation(dir.normalized); 
             controller.agent.AgentKinematics.rotation = 0;
-          
             //cache result
             return lastResult = TaskResult.RUNNING;
         }

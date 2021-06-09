@@ -13,6 +13,7 @@ namespace Base
         public Base.AI.Behaviours.BehaviourTreesManager behaviourTreesMgr;
         public GameSystem gameSystem;
         public Events.EventsManager eventsManager;
+        public Base.TextControl.TextElementsManager textsElementsManager;
         private static GlobalDataContainer container = null;
 
         public static GlobalDataContainer It

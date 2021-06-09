@@ -26,7 +26,7 @@ namespace Base.Events
         public void addListener(IEventListener listener) => listeners.Add(listener);
         public bool removeListener(IEventListener listener) => listeners.Remove(listener);
        
-        public void executeEvent(BaseEvent event_)
+        public virtual void executeEvent(BaseEvent event_)
         {
             foreach(IEventListener listener in listeners)
             {

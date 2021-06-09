@@ -5,25 +5,18 @@ using UnityEngine;
 
 namespace Base.TextControl
 {
-
-
     public enum LoopType
     {
         Once,
         Loop,
         PingPong
     }
-    public class TextAnimation
+    public abstract class TextAnimation
     {
         protected float _animationSpeed = 0;
         protected bool _isPlaying = false;
         protected iTween.LoopType loopType = iTween.LoopType.none;
-
-
-        public virtual void StartAnimation(TextElement textElement)
-        {
-
-        }
+        public abstract void StartAnimation(TextElement textElement);
 
         public void StopAnimation(TextElement textElement)
         {

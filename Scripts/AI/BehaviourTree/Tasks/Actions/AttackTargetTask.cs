@@ -58,8 +58,11 @@ namespace Base.AI.Behaviours
             }
 
             //call event
-            
-           // GlobalDataContainer.It.eventsManager.dispatchEvent()
+            Base.Events.AttackTargetEvent attackEvent = new Events.AttackTargetEvent(eventID);
+            attackEvent.DispatchGlobally = false;
+            attackEvent.attackTarget = target.value;
+            attackEvent.Sender = controller.agent.transform.GetInstanceID();
+            GlobalDataContainer.It.eventsManager.dispatchEvent(attackEvent);
 
             //cache result
             return lastResult = TaskResult.SUCCESS;

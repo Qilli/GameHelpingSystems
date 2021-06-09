@@ -61,6 +61,7 @@ namespace Base.AI.Behaviours.Editor
         private InspectorType selectedInspector = InspectorType.INSPECTOR;
         private List<BehaviourTreeTask> behaviourTasks = new List<BehaviourTreeTask>();
         private List<CompositeTreeTask> behaviourTasks_Composite = new List<CompositeTreeTask>();
+        private List<DecoratorTreeTask> behaviourTasks_Decorators = new List<DecoratorTreeTask>();
         private List<ActionTreeTask> behaviourTasks_Actions = new List<ActionTreeTask>();
         private List<SharedVariable> allSharedVariablesTypes = new List<SharedVariable>();
         private string[] sharedVariablesNamesArray;
@@ -156,14 +157,23 @@ namespace Base.AI.Behaviours.Editor
         private void getAllTasks()
         {
             behaviourTasks = Base.CommonCode.Common.FindAssetsByType<BehaviourTreeTask>();
-            List<CompositeTreeTask> allData = Base.CommonCode.Common.FindAssetsByType<CompositeTreeTask>();
+            List<CompositeTreeTask> allData_Composites = Base.CommonCode.Common.FindAssetsByType<CompositeTreeTask>();
+            List<DecoratorTreeTask> allData_Decorators = Base.CommonCode.Common.FindAssetsByType<DecoratorTreeTask>();
             behaviourTasks_Composite.Clear();
+            behaviourTasks_Decorators.Clear();
             behaviourTasks_Actions.Clear();
-            foreach (CompositeTreeTask t in allData)
+            foreach (CompositeTreeTask t in allData_Composites)
             {
                 if (t.useAsTaskSourceEditor)
                 {
                     behaviourTasks_Composite.Add(t);
+                }
+            }
+            foreach (DecoratorTreeTask t in allData_Decorators)
+            {
+                if (t.useAsTaskSourceEditor)
+                {
+                    behaviourTasks_Decorators.Add(t);
                 }
             }
             foreach (BehaviourTreeTask t in behaviourTasks)
@@ -505,6 +515,11 @@ namespace Base.AI.Behaviours.Editor
                 SharedBool sv_bool = sv as SharedBool;
                 sv_bool.value = EditorGUILayout.Toggle(sv_bool.value);
             }
+            else if (sv.type == SharedVariable.SharedType.VECTOR)
+            {
+                SharedVector sv_vec = sv as SharedVector;
+                sv_vec.value = EditorGUILayout.Vector3Field("",sv_vec.value);
+            }
         }
 
         private void drawAddNewSharedVariablePanel()
@@ -622,6 +637,11 @@ namespace Base.AI.Behaviours.Editor
             {
                 GUILayout.Label("Selected node is a leaf node");
             }
+            else if(selectedNode.taskType == TaskType.DECORATOR && selectedNode.children.Count>0
+                && ((DecoratorTreeTask)selectedNode).OnlySingleChildAllowed)
+            {
+                GUILayout.Label("Selected node has OnlyOneChildAllowed flag enabled, cannot add new childen");
+            }
             else
             {
                 GUILayout.BeginVertical();
@@ -637,15 +657,35 @@ namespace Base.AI.Behaviours.Editor
                         Type toCreate = current.GetType();
                         Vector2 createAt = computeStartPositionFor(selectedNode);
                         var element = selectedBehaviour.createNodeOfType(toCreate, selectedNode, createAt);
-                        selectedNode = element;
-                        selectedNode.editorTexture = current.editorTexture;
-                        selectedNode.taskTypeName = current.taskTypeName;
-                        selectedNode.taskType = current.taskType;
+                        if (element != null)
+                        {
+                            selectedNode = element;
+                            selectedNode.editorTexture = current.editorTexture;
+                            selectedNode.taskTypeName = current.taskTypeName;
+                            selectedNode.taskType = current.taskType;
+                        }
                     }
                 }
                 GUILayout.Space(20);
-                GUILayout.Label("__________________CONDITIONS__________________");
+                GUILayout.Label("__________________DECORATORS__________________");
                 GUILayout.Space(20);
+                foreach (BehaviourTreeTask current in behaviourTasks_Decorators)
+                {
+                    // Debug.Log(current.name);
+                    if (GUILayout.Button(current.taskTypeName))
+                    {
+                        Type toCreate = current.GetType();
+                        Vector2 createAt = computeStartPositionFor(selectedNode);
+                        var element = selectedBehaviour.createNodeOfType(toCreate, selectedNode, createAt);
+                        if (element != null)
+                        {
+                            selectedNode = element;
+                            selectedNode.editorTexture = current.editorTexture;
+                            selectedNode.taskTypeName = current.taskTypeName;
+                            selectedNode.taskType = current.taskType;
+                        }
+                    }
+                }
                 GUILayout.Space(20);
                 GUILayout.Label("__________________ACTIONS__________________");
                 GUILayout.Space(20);

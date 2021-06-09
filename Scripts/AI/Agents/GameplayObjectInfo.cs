@@ -19,6 +19,7 @@ namespace Base.AI.Agents
         public string Name => objectName;
 
         public GameplayObjectType Type => objectType;
+        public Transform objectTransformID;
 
         private void Awake()
         {

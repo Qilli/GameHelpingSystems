@@ -1,0 +1,18 @@
+{
+    "name": "EditorHelpingSystems",
+    "rootNamespace": "",
+    "references": [
+        "GUID:6583ed7fa192cfc41bbda9a7360d6502"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

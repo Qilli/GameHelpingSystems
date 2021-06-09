@@ -55,7 +55,6 @@ namespace Base.AI.Behaviours
         public override TaskResult run(BehaviourTreeController.TreeStatus controller)
         {
             if (hasReadyResult(controller)) return lastResult;
-
             if (target.value != null)
             {
                 return lastResult = TaskResult.SUCCESS;
@@ -68,6 +67,7 @@ namespace Base.AI.Behaviours
                 found = GameObject.FindGameObjectWithTag(targetTag);
                 if (found != null)
                 {
+                    
                     if (useName && !found.name.Equals(targetName))
                     {
                         return lastResult=TaskResult.FAIL;
@@ -86,8 +86,7 @@ namespace Base.AI.Behaviours
                     return lastResult = TaskResult.SUCCESS;
                 }
                 return lastResult = TaskResult.FAIL;
-            }
-            
+            }   
             //cache result
             return lastResult = TaskResult.FAIL;
         }

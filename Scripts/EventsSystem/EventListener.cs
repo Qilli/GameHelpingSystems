@@ -14,27 +14,40 @@ namespace Base.Events
     {
         public GameEventID eventID;
         public UnityGameBaseEvent listeners;
+        public bool isLocal = false;
 
         void OnEnable()
         {
-            //register in system
-            GlobalDataContainer.It.eventsManager.addListener(this);
+            if (isLocal)
+            {
+                LocalEventsController leventsCtrl = GetComponent<LocalEventsController>();
+                if(leventsCtrl==null)
+                {
+                    leventsCtrl=transform.parent.GetComponent<LocalEventsController>();
+                    if (leventsCtrl == null) Debug.LogError("Cannot find local events controller for local listener");
+                    else leventsCtrl.GetController.addListener(this);
+                }
+            }
+            else
+            {
+                //register in system
+                GlobalDataContainer.It.eventsManager.addListener(this);
+            }
         }
-
         void OnDisable()
         {
-            GlobalDataContainer.It.eventsManager.removeListener(this);
+           if(isLocal==false&&GlobalDataContainer.It!=null) GlobalDataContainer.It.eventsManager.removeListener(this);
         }
-
         public void onEvent(BaseEvent event_)
         {
-         //   listeners?.Invoke(event_);
+            if (eventID.eventID == event_.GetEventID.eventID)
+            {
+                listeners?.Invoke(event_);
+            }
         }
-
         public int getEventCategory()
         {
             return (int)eventID.eventCategory;
         }
-
     }
 }

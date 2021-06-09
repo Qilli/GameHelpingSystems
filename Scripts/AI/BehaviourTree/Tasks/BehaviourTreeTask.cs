@@ -51,8 +51,8 @@ namespace Base.AI.Behaviours
 
         public int CompareTo(BehaviourTreeTask other)
         {
-            if (this.rect.min.x < other.rect.min.x) return 1;
-            else return -1;
+            if (this.rect.min.x < other.rect.min.x) return -1;
+            else return 1;
         }
 
         //node description

@@ -21,7 +21,7 @@ namespace Base.AI.Behaviours
             Blackboard b = new Blackboard();
             foreach(KeyValuePair<string,SharedVariable> elem in variables)
             {
-                b.variables.Add(elem.Key,elem.Value);
+                b.variables.Add(elem.Key,elem.Value.getCopy());
             }
             return b;
         }
@@ -67,7 +67,6 @@ namespace Base.AI.Behaviours
         }
         public IEnumerable<SharedVariable> getAllSharedVariables()
         {
-            
             foreach(KeyValuePair<string,SharedVariable> sv in variables)
             {
                 yield return sv.Value;
@@ -76,6 +75,7 @@ namespace Base.AI.Behaviours
 
         public void OnBeforeSerialize()
         {
+            Validate();
             serializer.clear();
             foreach(KeyValuePair<string,SharedVariable> value in variables)
             {
@@ -108,6 +108,10 @@ namespace Base.AI.Behaviours
             if (result != null) return result;
             result = serializer.sharedObjects.Find(x => x.name == name);
             if (result != null) return result;
+            result = serializer.sharedBools.Find(x => x.name == name);
+            if (result != null) return result;
+            result = serializer.sharedVectors.Find(x => x.name == name);
+            if (result != null) return result;
             return result;
         }
 
@@ -120,6 +124,23 @@ namespace Base.AI.Behaviours
             else if (sv.type == SharedVariable.SharedType.STRING) serializer.sharedStrings.Add((SharedString)sv);
             else if (sv.type == SharedVariable.SharedType.TRANSFORM) serializer.sharedTransforms.Add((SharedTransform)sv);
             else if (sv.type == SharedVariable.SharedType.BOOL) serializer.sharedBools.Add((SharedBool)sv);
+            else if (sv.type == SharedVariable.SharedType.VECTOR) serializer.sharedVectors.Add((SharedVector)sv);
+        }
+
+        private void Validate()
+        {
+            List<string> toErase = new List<string>();
+            foreach (KeyValuePair<string, SharedVariable> value in variables)
+            {
+                if(value.Value==null)
+                {
+                    toErase.Add(value.Key);
+                }
+            }
+            for(int a=0;a<toErase.Count;++a)
+            {
+                variables.Remove(toErase[a]);
+            }
         }
     }
     [System.Serializable]
@@ -133,6 +154,7 @@ namespace Base.AI.Behaviours
         public List<SharedGameObject> sharedGameObjects = new List<SharedGameObject>();
         public List<SharedObject> sharedObjects = new List<SharedObject>();
         public List<SharedBool> sharedBools = new List<SharedBool>();
+        public List<SharedVector> sharedVectors = new List<SharedVector>();
 
         public void clear()
         {
@@ -144,6 +166,7 @@ namespace Base.AI.Behaviours
             sharedGameObjects.Clear();
             sharedBools.Clear();
             sharedObjects.Clear();
+            sharedVectors.Clear();
         }
     }
 }

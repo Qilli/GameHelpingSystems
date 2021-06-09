@@ -13,6 +13,10 @@ namespace Base.TextControl
         private TMP_Text _textMeshPro;
         private TextType _typeOfText;
         private float _timeToDestroy;
+        private float timer;
+        private Transform parent;
+        private Vector3 localOffset;
+        private bool hideAnimationsPlaying;
 
         List<TextAnimation> _onShowAnimations = new List<TextAnimation>();
         List<TextAnimation> _onIdleAnimations = new List<TextAnimation>();
@@ -40,6 +44,15 @@ namespace Base.TextControl
             _textMeshPro = gameObject.GetComponent<TextMeshProUGUI>();
             _typeOfText = TextType.Text2D;
         }
+        public void setParent(Transform parent_)
+        {
+            parent = parent_;
+        }
+        public void setLocalOffset(Vector3 localOffset_)
+        {
+            localOffset = localOffset_;
+        }
+        public void setLocalEulers(float x = 0, float y = 0, float z = 0) => transform.localEulerAngles = new Vector3(x, y, z);
 
         public void SetText(string text)
         {
@@ -70,21 +83,63 @@ namespace Base.TextControl
         {
             _textMeshPro.color = color;
         }
+        public virtual void onUpdate(float deltTime)
+        {
+            if(parent!=null)
+            {
+                transform.parent.position = parent.position + localOffset;
+            }
+
+            if (hideAnimationsPlaying)
+            {
+                bool done = true;
+                foreach (TextAnimation anim in _onHideAnimations)
+                {
+                    if (!anim.IsOver())
+                    {
+                        done = false;
+                        break;
+                    }
+                }
+                if (done)
+                {
+                    //destroy when fade ends
+                    hideAnimationsPlaying = false;
+                    destroy();
+                }
+            }
+
+            if (_timeToDestroy>0)
+            {
+                timer += Time.deltaTime;
+                if(timer>=_timeToDestroy)
+                {
+                    if(_onHideAnimations.Count>0)
+                    {
+                        OnHideAnimation();
+                        _timeToDestroy = -1;
+                        hideAnimationsPlaying = true;
+                    }
+                    else
+                    {
+                        destroy();
+                    }
+                }
+            }
+        }
 
         public void SetAutoDestroyTime(float animationDuration)
         {
             _timeToDestroy = animationDuration;
             if (animationDuration > 0)
             {
-                QuickTimeEvent e = new QuickTimeEvent(1, animationDuration, onEvent);
-                //GlobalDataContainer.It.qteController.addAndStartQTEvent(e); TODO musi dodac ten event zeby to w ogole dzialalo
+                timer = 0;
             }
-
         }
-
-        void onEvent()
+        void destroy()
         {
             onAutoDestroy?.Invoke(this);
+            GlobalDataContainer.It.textsElementsManager.RemoveTextElement(this);
         }
 
         public void OnShowAnimation()

@@ -26,7 +26,7 @@ namespace Base.AI.Behaviours.Editor
             EditorGUI.indentLevel = 0;
 
             if (objectVariable.treeOwner == null) return;
-
+ 
             string[] possibleNames = objectVariable.treeOwner.Blackboard.getNamesOfVariablesByType(sharedVariable.type);
             selectedIndex = 0;
             for(int a=0;a<possibleNames.Length;++a)

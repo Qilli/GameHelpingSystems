@@ -52,7 +52,7 @@ namespace Base.AI.Behaviours
                 return lastResult = TaskResult.FAIL;
             }
 
-            timer += Time.fixedDeltaTime;
+            timer += Time.deltaTime;
             if(timer>targetTimer.value)
             {
                     timer = 0;

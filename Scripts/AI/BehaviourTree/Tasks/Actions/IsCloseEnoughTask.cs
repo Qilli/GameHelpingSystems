@@ -15,6 +15,7 @@ namespace Base.AI.Behaviours
         public bool useXAxis = false;
         public bool useYAxis = false;
         public bool useZAxis = false;
+        public bool resetAgentVelocity = true;
 
         public override BehaviourTreeTaskRuntime getRuntimeTask(BehaviourTreeController runtimeController,BehaviourTreeTaskRuntime parent=null)
         {
@@ -27,6 +28,7 @@ namespace Base.AI.Behaviours
             rn.useXAxis = useXAxis;
             rn.useYAxis = useYAxis;
             rn.useZAxis = useZAxis;
+            rn.resetAgentVelocity = resetAgentVelocity;
             return rn;
         }
 
@@ -40,6 +42,7 @@ namespace Base.AI.Behaviours
             list.Add(obj.FindProperty("useXAxis"));
             list.Add(obj.FindProperty("useYAxis"));
             list.Add(obj.FindProperty("useZAxis"));
+            list.Add(obj.FindProperty("resetAgentVelocity"));
             return list;
         }
 
@@ -53,6 +56,7 @@ namespace Base.AI.Behaviours
         public bool useXAxis = false;
         public bool useYAxis = false;
         public bool useZAxis = false;
+        public bool resetAgentVelocity = true;
 
         public override TaskResult run(BehaviourTreeController.TreeStatus controller)
         {
@@ -69,11 +73,15 @@ namespace Base.AI.Behaviours
 
             if(dir.magnitude <= distance.value)
             {
+                if(resetAgentVelocity)
+                {
+                    controller.agent.AgentKinematics.velocity = Vector3.zero;
+                }
                 return lastResult = TaskResult.SUCCESS;
             }
           
             //cache result
-            return lastResult = TaskResult.SUCCESS;
+            return lastResult = TaskResult.FAIL;
         }
 
     }

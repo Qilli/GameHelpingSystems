@@ -16,16 +16,26 @@ namespace Base.AI.Behaviours
             FLOAT,
             INT,
             STRING,
-            BOOL
+            BOOL,
+            VECTOR
         }
         public string name;
         public string typeName;
         public SharedType type;
+
+        public virtual SharedVariable getCopy()
+        {
+            return null;
+        }
     }
     [System.Serializable]
     public class SharedVariable<T> : SharedVariable
     {
         public T value;
+        public override SharedVariable getCopy()
+        {
+            return new SharedVariable<T>() { name = this.name, type = this.type, value = this.value };
+        }
     }
     [System.Serializable]
     public class SharedTransform: SharedVariable<Transform>
@@ -34,6 +44,10 @@ namespace Base.AI.Behaviours
         {
             type = SharedVariable<Transform>.SharedType.TRANSFORM;
             typeName = "Transform";
+        }
+        public override SharedVariable getCopy()
+        {
+            return new SharedTransform () { name = this.name, type = this.type, value = this.value };
         }
     }
     [System.Serializable]
@@ -44,6 +58,10 @@ namespace Base.AI.Behaviours
             type = SharedVariable<int>.SharedType.INT;
             typeName = "Integer";
         }
+        public override SharedVariable getCopy()
+        {
+            return new SharedInt() { name = this.name, type = this.type, value = this.value };
+        }
     }
     [System.Serializable]
     public class SharedString : SharedVariable<string>
@@ -52,6 +70,10 @@ namespace Base.AI.Behaviours
         {
             type = SharedVariable<int>.SharedType.STRING;
             typeName = "String";
+        }
+        public override SharedVariable getCopy()
+        {
+            return new SharedString() { name = this.name, type = this.type, value = this.value };
         }
     }
     [System.Serializable]
@@ -62,6 +84,10 @@ namespace Base.AI.Behaviours
             type = SharedVariable<int>.SharedType.GAMEOBJECT;
             typeName = "GameObject";
         }
+        public override SharedVariable getCopy()
+        {
+            return new SharedGameObject() { name = this.name, type = this.type, value = this.value };
+        }
     }
     [System.Serializable]
     public class SharedObject : SharedVariable<Object>
@@ -70,6 +96,10 @@ namespace Base.AI.Behaviours
         {
             type = SharedVariable<int>.SharedType.OBJECT;
             typeName = "Object";
+        }
+        public override SharedVariable getCopy()
+        {
+            return new SharedObject() { name = this.name, type = this.type, value = this.value };
         }
     }
     [System.Serializable]
@@ -80,6 +110,10 @@ namespace Base.AI.Behaviours
             type = SharedVariable<int>.SharedType.FLOAT; 
             typeName = "Float";
         }
+        public override SharedVariable getCopy()
+        {
+            return new SharedFloat() { name = this.name, type = this.type, value = this.value };
+        }
     }
     [System.Serializable]
     public class SharedBool : SharedVariable<bool>
@@ -88,6 +122,23 @@ namespace Base.AI.Behaviours
         {
             type = SharedVariable<int>.SharedType.BOOL;
             typeName = "Bool";
+        }
+        public override SharedVariable getCopy()
+        {
+            return new SharedBool() { name = this.name, type = this.type, value = this.value };
+        }
+    }
+    [System.Serializable]
+    public class SharedVector : SharedVariable<Vector3>
+    {
+        public SharedVector()
+        {
+            type = SharedVariable<int>.SharedType.VECTOR;
+            typeName = "Vector";
+        }
+        public override SharedVariable getCopy()
+        {
+            return new SharedVector() { name = this.name, type = this.type, value = this.value };
         }
     }
 

@@ -9,6 +9,13 @@ namespace Base.TextControl
     {
         Vector3 _startScale = Vector3.one;
         Vector3 _endScale;
+        public TextAnimationScale(float speed,Vector3 startScaleValue,
+            Vector3 endScaleValue)
+        {
+            SetAnimationSpeed(speed);
+            _startScale = startScaleValue;
+            _endScale = endScaleValue;
+        }
 
         public override void StartAnimation(TextElement textElement)
         {

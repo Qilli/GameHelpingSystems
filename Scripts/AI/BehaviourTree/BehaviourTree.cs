@@ -152,11 +152,20 @@ namespace Base.AI.Behaviours
         }
 
         //Change parent of parentFor for a newParent, clear all old connections
-        public static void Reparent(BehaviourTreeTask newParent,BehaviourTreeTask parentFor)
+        public static bool Reparent(BehaviourTreeTask newParent,BehaviourTreeTask parentFor)
         {
+            if(newParent.taskType== TaskType.DECORATOR)
+            {
+                if(((DecoratorTreeTask)newParent).OnlySingleChildAllowed==true && newParent.children.Count>0)
+                {
+                    //cant add another child when flag only one children is enabled
+                    return false;
+                }
+            }
             parentFor.parent.removeChildConnection(parentFor);
             parentFor.parent = newParent;
             newParent.addNewChild(parentFor);
+            return true;
         }
 
         /// <summary>

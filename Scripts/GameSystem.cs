@@ -48,34 +48,28 @@ namespace Base
             {
                 case GameState.PAUSE:
                     {
-                        Physics2D.autoSimulation = false;
-
-
+                        Physics2D.simulationMode = SimulationMode2D.Script;
                     }
                     break;
                 case GameState.END_GAME:
                     {
-                        Physics2D.autoSimulation = false;
-
+                        Physics2D.simulationMode = SimulationMode2D.Script;
                     }
                     break;
                 case GameState.PLAY:
                     {
-                        Physics2D.autoSimulation = true;
-
-
+                        Physics2D.simulationMode = SimulationMode2D.FixedUpdate;
                     }
                     break;
                 case GameState.START:
                     {
-                        Physics2D.autoSimulation = true;
+                        Physics2D.simulationMode = SimulationMode2D.FixedUpdate;
 
                     }
                     break;
                 case GameState.GAME_OVER:
                     {
-                        Physics2D.autoSimulation = false;
-
+                        Physics2D.simulationMode = SimulationMode2D.Script;
                     }
                     break;
             }

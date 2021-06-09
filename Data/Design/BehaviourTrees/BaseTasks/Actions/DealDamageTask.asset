@@ -1,0 +1,37 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b3584b1687ff05d47ba83b943cd76516, type: 3}
+  m_Name: DealDamageTask
+  m_EditorClassIdentifier: 
+  treeOwner: {fileID: 0}
+  taskType: 0
+  children: []
+  parent: {fileID: 0}
+  useAsTaskSourceEditor: 1
+  editorTexture: {fileID: 2800000, guid: 0777fd22d49561a4497634ecba7d2a71, type: 3}
+  taskTypeName: DealDamage
+  description: Deal Damage to target
+  rect:
+    serializedVersion: 2
+    x: 20
+    y: 20
+    width: 100
+    height: 100
+  target:
+    name: 
+    type: 2
+  eventType:
+    name: 
+    type: 1
+  damageValue:
+    name: 
+    type: 3

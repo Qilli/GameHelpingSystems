@@ -48,9 +48,7 @@ namespace Base.AI.Agents
             get => agentKinematicData;
         }
         //gameplaySystem
-        public AIAttackSystem attackSystem;
-
-        
+        public AIAttackSystem attackSystem;    
         public override void init()
         {
             base.init();
@@ -61,15 +59,19 @@ namespace Base.AI.Agents
                 inited = true;
             }
         }
+        protected override void Awake()
+        {
+            base.Awake();
+            init();
+        }
         public virtual void updateSteering()
         {
-            rigid.MovePosition(agentKinematicData.position+agentKinematicData.velocity*Time.fixedDeltaTime);
-            transform.localEulerAngles = new Vector3(0,agentKinematicData.orientation,0);
+            transform.localEulerAngles = new Vector3(0, agentKinematicData.orientation, 0);
+            transform.Translate(agentKinematicData.velocity*Time.deltaTime,Space.World);     
             agentKinematicData.position = transform.position;
         }
-        public override void onFixedUpdate(float fixedDelta)
+        public override void onUpdate(float delta)
         {
-            base.onFixedUpdate(fixedDelta);
             updateSteering();
         }
 

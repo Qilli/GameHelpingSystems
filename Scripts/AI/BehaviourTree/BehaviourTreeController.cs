@@ -5,15 +5,15 @@ using UnityEngine;
 
 namespace Base.AI.Behaviours
 {
-    public class BehaviourTreeController : Base.ObjectsControl.BaseObject
+    public class BehaviourTreeController : Base.ObjectsControl.BaseObject,Base.Game.IOnPreDestroy
     {
+        [System.Serializable]
         public class TreeStatus
         {
             public TaskResult lastResult= TaskResult.SUCCESS;
             public bool fullTreeTraversalOnRunning = false;
             public AI.Agents.AIAgent agent;
         }
-
         public class ActionElement
         {
             public ActionTreeTask task = null;
@@ -24,14 +24,13 @@ namespace Base.AI.Behaviours
         public AI.Agents.AIAgent agent;
 
         protected BehaviourTreeTaskRuntime rootNode;
-        protected TreeStatus currentStatusIterator = new TreeStatus();
+        public TreeStatus currentStatusIterator = new TreeStatus();
         protected Blackboard blackboard;
 
         public TreeStatus getTreeIterator()
         {
             return currentStatusIterator;
         }
-
         public Blackboard Blackboard
         {
             get
@@ -39,28 +38,35 @@ namespace Base.AI.Behaviours
                 return blackboard;
             }
         }
-
         public override void init()
         {
-            base.init();
-            if(source == null)
+            if (!inited)
             {
-                Base.Log.Logging.Log("Source for behaviour tree is null, cannot create bt controller", Log.BaseLogType.ERROR);
-                return;
-            }
-            else
-            {
+                base.init();
+                if (source == null)
+                {
+                    Base.Log.Logging.Log("Source for behaviour tree is null, cannot create bt controller", Log.BaseLogType.ERROR);
+                    return;
+                }
+                else
+                {
 
-                //init controller
-                GlobalDataContainer.It.behaviourTreesMgr.registerBehaviourTree(this);
-                currentStatusIterator.lastResult = TaskResult.SUCCESS;
-                blackboard = source.Blackboard.getCopy();
-                rootNode=source.generateRuntimeNodes(this);
-                clearLastResults();
-                currentStatusIterator.agent = agent;
+                    //init controller
+                    GlobalDataContainer.It.behaviourTreesMgr.registerBehaviourTree(this);
+                    currentStatusIterator.lastResult = TaskResult.SUCCESS;
+                    blackboard = source.Blackboard.getCopy();
+                    rootNode = source.generateRuntimeNodes(this);
+                    clearLastResults();
+                    currentStatusIterator.agent = agent;
+                }
+                inited = true;
             }
         }
-
+        protected override void Awake()
+        {
+            base.Awake();
+            init();
+        }
         public virtual void stepTree(float timeStep)
         {
             //take first element from the stack
@@ -79,7 +85,6 @@ namespace Base.AI.Behaviours
                 status.lastResult = rootNode.run(getTreeIterator());
             }
         }
-
         private void clearLastResults()
         {
             rootNode.setLastResult(TaskResult.NONE, true);
@@ -88,11 +93,16 @@ namespace Base.AI.Behaviours
         protected override void OnDestroy()
         {
             base.OnDestroy();
-            if (GlobalDataContainer.It != null && GlobalDataContainer.It.behaviourTreesMgr != null)
-            {
-                GlobalDataContainer.It.behaviourTreesMgr.registerBehaviourTree(this);
-            }
+           // onPreDestroy();
         }
 
+        public void onPreDestroy()
+        {
+            Debug.Log("On pre destroy!");
+            if (GlobalDataContainer.It != null && GlobalDataContainer.It.behaviourTreesMgr != null)
+            {
+                GlobalDataContainer.It.behaviourTreesMgr.removeBehaviourTree(this);
+            }
+        }
     }
 }

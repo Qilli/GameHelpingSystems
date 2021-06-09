@@ -11,6 +11,7 @@ namespace Base.AI.Behaviours
         {
             RootTreeTaskRuntime runtime = new RootTreeTaskRuntime();
             runtime.type = TaskType.ROOT;
+
             foreach(BehaviourTreeTask child in children)
             {
                 runtime.children.Add(child.getRuntimeTask(runtimeController,runtime));
