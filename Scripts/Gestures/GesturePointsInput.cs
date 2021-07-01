@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+#if GESTURES
 using PDollarGestureRecognizer;
 namespace Base.Gestures
 {
@@ -86,3 +87,4 @@ namespace Base.Gestures
         public abstract Point getNewPoint();
     }
 }
+#endif

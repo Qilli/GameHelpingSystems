@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+#if GESTURES
 using PDollarGestureRecognizer;
 namespace Base.Gestures
 {
@@ -83,3 +84,4 @@ namespace Base.Gestures
         protected abstract GestureResult recognizeGesture();
     }
 }
+#endif
