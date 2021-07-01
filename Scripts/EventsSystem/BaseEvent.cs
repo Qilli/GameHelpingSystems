@@ -10,11 +10,12 @@ namespace Base.Events
         public BaseEvent(GameEventID id)
         {
             GetEventID = id;
+            DispatchGlobally = id.dispatchedGlobally;
+            EventName = id.eventName;
         }
         public string EventName { get; set; } = "BaseEvent";
         public float EventDispatchTime { get; set; } = 0.0f;
         public bool DispatchGlobally { get; set; } = false;
-        public int Category { get; set; } = EventsManager.GlobalEventsCategory;
         public object Sender { get; set; } = null;
         public GameEventID GetEventID { get; private set; }
     }
@@ -24,7 +25,7 @@ namespace Base.Events
         public Transform attackTarget;
         public AttackTargetEvent(GameEventID id_):base(id_)
         {
-            Category = 1;
+      
         }
     }
     public class DealDamageEvent: Base.Events.BaseEvent
@@ -33,7 +34,7 @@ namespace Base.Events
         public Game.DamageSourceInfo damageValue;
         public DealDamageEvent(GameEventID id_) : base(id_)
         {
-            Category = 1;
+           
         }
     }
     public class HitByMissleEvent : Base.Events.BaseEvent
@@ -44,7 +45,23 @@ namespace Base.Events
         public float rawDamageValue;
         public HitByMissleEvent(GameEventID id_) : base(id_)
         {
-            Category = 1;
+           
+        }
+    }
+    public class KilledEvent : Base.Events.BaseEvent
+    {
+        public bool isPlayer = false;
+        public KilledEvent(GameEventID id_) : base(id_)
+        {
+           
+        }
+    }
+    public class GameOverEvent : Base.Events.BaseEvent
+    {
+        public bool playerFailed = false;
+        public GameOverEvent(GameEventID id_) : base(id_)
+        {
+           
         }
     }
 }

@@ -10,7 +10,6 @@ namespace Base.Events
     {
         public string eventName;
         public bool dispatchedGlobally;
-        public int eventCategory;
         public int eventID = 0;
     }
 }

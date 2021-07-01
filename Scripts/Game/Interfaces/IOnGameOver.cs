@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 namespace Base.Game
 {
-    public interface IOnPreDestroy
+    public interface IOnGameOver
     {
-        void onPreDestroy();
+        void onGameOver(bool isGameFailed);
     }
 }

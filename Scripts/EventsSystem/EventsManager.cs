@@ -77,7 +77,7 @@ namespace Base.Events
             {
                 //find category
                 EventsController controller;
-                getController(out controller,eventObject.Category, addCategoryIfNotFound);
+                getController(out controller,eventObject.GetEventID.eventID, addCategoryIfNotFound);
                 if (controller != null)
                 {   
                     executeList.Add(new EventToExecute(eventObject,controller));

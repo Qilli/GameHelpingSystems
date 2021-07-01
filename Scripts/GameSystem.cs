@@ -7,7 +7,7 @@ using Base.ObjectsControl;
 namespace Base
 {
 
-    public class GameSystem : BaseObject
+    public class GameSystem : BaseObject,Events.IOnEvent
     {
         public enum GameState
         {
@@ -17,10 +17,13 @@ namespace Base
             START,
             GAME_OVER
         }
-
+        [Header("Params")]
         public GameState gameState;
         public ObjectsManagerController objectsMgr;
-
+        [Header("Handled events")]
+        public Events.GameEventID killedPlayerEventID;
+        [Header("Events to sent")]
+        public Events.GameEventID gameOverEventID;
         public override void init()
         {
             base.init();
@@ -36,6 +39,19 @@ namespace Base
         public virtual void quitGame()
         {
             Application.Quit();
+        }
+        public virtual void onEventResponse(Events.BaseEvent event_)
+        {
+            if(event_.GetEventID==killedPlayerEventID)
+            {
+                //kill event, check if it is a player
+                Events.KilledEvent killedEvent = event_ as Events.KilledEvent;
+                if (killedEvent?.isPlayer == true) changeState(GameState.GAME_OVER);
+            }
+        }
+        public bool hasEventID(Base.Events.GameEventID eventID)
+        {
+            return eventID==killedPlayerEventID;
         }
 
         public virtual void changeState(GameState newState)
@@ -70,6 +86,10 @@ namespace Base
                 case GameState.GAME_OVER:
                     {
                         Physics2D.simulationMode = SimulationMode2D.Script;
+                        //send game over event
+                        Events.GameOverEvent gameOver = new Events.GameOverEvent(gameOverEventID);
+                        gameOver.Sender = this;
+                        Base.GlobalDataContainer.It.eventsManager.dispatchEvent(gameOver);
                     }
                     break;
             }

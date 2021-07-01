@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 namespace Base.Game
 {
-    public class CharacterBaseLifeControl : MonoBehaviour,IIsAlive
+    public class CharacterBaseLifeControl : MonoBehaviour,IIsAlive,Events.IOnEvent
     {
         [System.Serializable]
         public class DamageVunerable
@@ -22,24 +22,30 @@ namespace Base.Game
         public DamageVunerable[] vunerablesList = null;
         [Header("Life effects")]
         public Base.Game.DynamicObjectEffect[] deathEffects = null;
+        public Base.Game.DynamicObjectEffect[] bornEffects = null;
         [Header("Death listeners")]
-        public Base.Game.IOnPreDestroy[] deathListeners = null;
+        public Base.Game.IOnLifeChangeActions[] lifeListeners = null;
         protected Base.AI.Agents.GameplayObjectInfo info;
-        [Header("Deal damage event")]
-        public Base.Events.GameEventID damageEventID;
+        [Header("On Event response")]
+        public Base.Events.GameEventID dealDamageEventID;
         protected void Awake()
         {
             //find all death listeners
-            deathListeners = this.GetComponentsInChildren<Base.Game.IOnPreDestroy>();
+            lifeListeners = this.GetComponentsInChildren<Base.Game.IOnLifeChangeActions>();
             info = GetComponent<Base.AI.Agents.GameplayObjectInfo>();
+            showOnBornEffects();
         }
         public bool isAlive()
         {
             return healthValue > 0;
         }
-        public virtual void onDamageReceivedEvent(Base.Events.BaseEvent damageEvent)
+        public virtual void onEventResponse(Base.Events.BaseEvent damageEvent)
         {
             Debug.Log("OnDamageReceived!");
+        }
+        public virtual bool hasEventID(Base.Events.GameEventID eventID)
+        {
+            return eventID == dealDamageEventID;
         }
         public virtual bool isHurtByThisDamage(DamageSourceInfo source)
         {
@@ -63,6 +69,7 @@ namespace Base.Game
         {
             healthValue -= damage;
             healthValue = Mathf.Clamp(healthValue,0,10000);
+            checkIfWeNeedToKillCharacter();
         }
         public virtual bool tryToDealDamage(DamageSourceInfo source,out float damageDealt)
         {
@@ -97,9 +104,9 @@ namespace Base.Game
         {
             if(!isAlive())
             {
-                if(deathListeners!=null)
+                if(lifeListeners!=null)
                 {
-                    foreach(Base.Game.IOnPreDestroy pre in deathListeners)
+                    foreach(Base.Game.IOnLifeChangeActions pre in lifeListeners)
                     {
                         pre.onPreDestroy();
                     }
@@ -107,13 +114,24 @@ namespace Base.Game
             }
         }
 
-        protected void createDeathEffect(Base.Game.DynamicObjectEffect template)
+        protected virtual void showOnBornEffects()
         {
-            GameObject effect = GameObject.Instantiate<GameObject>(template.template,
-                info.objectTransformID.position + template.initPosOffset, Quaternion.identity, null
-                );
-            //set lifetime
-            if (template.lifeTime > 0) GameObject.Destroy(effect, template.lifeTime);
+            if (lifeListeners != null)
+            {
+                foreach (Base.Game.IOnLifeChangeActions pre in lifeListeners)
+                {
+                    pre.onBorn();
+                }
+            }
+            //show death effects
+            if (bornEffects != null)
+            {
+                foreach (Base.Game.DynamicObjectEffect obj in bornEffects)
+                {
+                    Base.Game.DynamicObjectEffect.createEffect(obj, info.objectTransformID.position);
+                }
+            }
         }
+
     }
 }

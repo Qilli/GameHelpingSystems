@@ -30,6 +30,10 @@ namespace Base.ObjectsControl
             {
                 o.onChangeState(newState);
             }
+
+            if (newState == GameSystem.GameState.END_GAME || newState == GameSystem.GameState.GAME_OVER ||
+                newState == GameSystem.GameState.PAUSE) updateEnabled = false;
+            else updateEnabled = true;
         }
 
         public virtual void onDestroy()

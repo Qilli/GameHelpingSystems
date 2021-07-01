@@ -6,6 +6,5 @@ namespace Base.AI.Agents
     public abstract class AIAttackSystem : MonoBehaviour
     {
         public abstract void attack(Transform target, Vector3? attackStartPosition = null);
-        public abstract void onAttackEvent(Base.Events.BaseEvent event_);
     }
 }

@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace Base.AI.Behaviours
 {
-    public class BehaviourTreeController : Base.ObjectsControl.BaseObject,Base.Game.IOnPreDestroy
+    public class BehaviourTreeController : Base.ObjectsControl.BaseObject,Base.Game.IOnLifeChangeActions
     {
         [System.Serializable]
         public class TreeStatus
@@ -98,11 +98,14 @@ namespace Base.AI.Behaviours
 
         public void onPreDestroy()
         {
-            Debug.Log("On pre destroy!");
             if (GlobalDataContainer.It != null && GlobalDataContainer.It.behaviourTreesMgr != null)
             {
                 GlobalDataContainer.It.behaviourTreesMgr.removeBehaviourTree(this);
             }
+        }
+        public void onBorn()
+        {
+
         }
     }
 }
