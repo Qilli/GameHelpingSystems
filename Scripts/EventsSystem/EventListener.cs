@@ -39,7 +39,7 @@ namespace Base.Events
                 }
             }
         }
-        public EventListenerElement[] elements;
+        public EventListenerElement element;
         public bool lookForListenersInChildren;
         public bool isLocal = false;
 
@@ -61,7 +61,7 @@ namespace Base.Events
                 GlobalDataContainer.It.eventsManager.addListener(this);
             }
 
-            foreach (EventListenerElement e in elements) e.onInit(transform, lookForListenersInChildren);
+            element.onInit(transform, lookForListenersInChildren);
 
         }
         void OnDisable()
@@ -70,11 +70,11 @@ namespace Base.Events
         }
         public void onEvent(BaseEvent event_)
         {
-            foreach (EventListenerElement e in elements) e.checkEvent(event_);
+            element.checkEvent(event_);
         }
         public int getEventCategory()
         {
-            return (elements != null && elements.Length > 0) ? elements[0].eventID.eventID : -1;
+            return element.eventID.eventID;
         }
     }
 }

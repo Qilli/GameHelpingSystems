@@ -43,6 +43,7 @@ namespace Base.Events
         public Vector3 hitPoint;
         public bool dealtDamage;
         public float rawDamageValue;
+        public bool getStrongerByThisHit = false;
         public HitByMissleEvent(GameEventID id_) : base(id_)
         {
            

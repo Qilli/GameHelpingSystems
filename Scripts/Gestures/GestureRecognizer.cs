@@ -7,11 +7,15 @@ namespace Base.Gestures
 {
     public abstract class GestureRecognizer : Base.ObjectsControl.BaseObject
     {
-
+        public enum GestureDirection
+        {
+            NONE,UP,DOWN,RIGHT,LEFT
+        }
         public class GestureResult
         {
             public string gestureName;
             public float probability;
+            public GestureDirection direction = GestureDirection.NONE;
         }
 
         public delegate void OnNewGesture(GestureResult recognizedGesture);

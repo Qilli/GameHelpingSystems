@@ -5,9 +5,16 @@ namespace Base.AI.Agents
 {
     public class AIAgentObjectInfo : GameplayObjectInfo
     {
+        [Header("Parameters")]
+        public Vector3 toCenterOffset = Vector3.zero;
         public AIAgentObjectInfo():base(GameplayObjectType.AIAGENT)
         {
 
+        }
+
+        public override Vector3 getTargetPosition()
+        {
+            return base.getTargetPosition()+toCenterOffset;
         }
     }
 }

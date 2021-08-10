@@ -9,11 +9,15 @@ namespace Base.Game
         public class DamageVunerable
         {
             public DamageSourceInfo.DamageSource forDamageSource;
-            [Tooltip("1 -> 100% 0 -> 0%")]
+            [Tooltip("1 -> 100% 0 -> 0% -1->-100%")]
             public float percReaction = 1.0f; // 0.0 -> no result, 1.0 -> 100%, -1.0f -> deal no damage, on the contrary
             public bool vunerableTo(DamageSourceInfo.DamageSource source)
             {
                 return forDamageSource == source&&percReaction>0.0f;
+            }
+            public bool getStrongerBy(DamageSourceInfo.DamageSource source)
+            {
+                return forDamageSource == source && percReaction < 0.0f;
             }
         }
 
@@ -84,6 +88,20 @@ namespace Base.Game
                 return true;
             }return false;
             
+        }
+        public virtual bool isMadeStrongerByThisDamage(DamageSourceInfo source)
+        {
+            foreach (DamageVunerable dv in vunerablesList)
+            {
+                foreach (DamageSourceInfo.SourceValue sourceDamage in source.damageSources)
+                {
+                    if (dv.getStrongerBy(sourceDamage.source))
+                    {
+                        return true;
+                    }
+                }
+            }
+            return false;
         }
 
         protected float dealDamageWithSource(DamageSourceInfo.SourceValue source)

@@ -144,6 +144,7 @@ GameObject:
   m_Component:
   - component: {fileID: 582372140724956173}
   - component: {fileID: 582372140724956172}
+  - component: {fileID: 146485299}
   m_Layer: 0
   m_Name: GameSystem
   m_TagString: Untagged
@@ -183,6 +184,27 @@ MonoBehaviour:
   inited: 0
   gameState: 0
   objectsMgr: {fileID: 582372140781924943}
+  killedPlayerEventID: {fileID: 11400000, guid: cf07ce864abba944986c27556a262a35, type: 2}
+  gameOverEventID: {fileID: 11400000, guid: 13305a792d09e184b8167095f87ffad6, type: 2}
+--- !u!114 &146485299
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 582372140724956170}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ae40acd7babd83c4caa93a84f28925d5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  element:
+    eventID: {fileID: 11400000, guid: cf07ce864abba944986c27556a262a35, type: 2}
+    listeners:
+      m_PersistentCalls:
+        m_Calls: []
+  lookForListenersInChildren: 0
+  isLocal: 0
 --- !u!1 &582372140781924941
 GameObject:
   m_ObjectHideFlags: 0
