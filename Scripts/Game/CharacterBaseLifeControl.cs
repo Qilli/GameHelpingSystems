@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 namespace Base.Game
 {
-    public class CharacterBaseLifeControl : MonoBehaviour,IIsAlive,Events.IOnEvent
+    public class CharacterBaseLifeControl : MonoBehaviour,IIsAlive,Events.IOnEvent,ILifePointsControl
     {
         [System.Serializable]
         public class DamageVunerable
@@ -23,6 +23,7 @@ namespace Base.Game
 
         [Header("Base Info")]
         public float healthValue = 100;
+        public float maxHealthValue = 150;
         public DamageVunerable[] vunerablesList = null;
         [Header("Life effects")]
         public Base.Game.DynamicObjectEffect[] deathEffects = null;
@@ -32,13 +33,7 @@ namespace Base.Game
         protected Base.AI.Agents.GameplayObjectInfo info;
         [Header("On Event response")]
         public Base.Events.GameEventID dealDamageEventID;
-        protected void Awake()
-        {
-            //find all death listeners
-            lifeListeners = this.GetComponentsInChildren<Base.Game.IOnLifeChangeActions>();
-            info = GetComponent<Base.AI.Agents.GameplayObjectInfo>();
-            showOnBornEffects();
-        }
+        #region PUBLIC
         public bool isAlive()
         {
             return healthValue > 0;
@@ -69,11 +64,25 @@ namespace Base.Game
             }
             return false;
         }
-        public virtual void dealRawDamage(float damage)
+        public virtual void removeLifePoints(float lifePoints)
         {
-            healthValue -= damage;
-            healthValue = Mathf.Clamp(healthValue,0,10000);
+            healthValue -= lifePoints;
+            healthValue = Mathf.Clamp(healthValue,0,maxHealthValue);
             checkIfWeNeedToKillCharacter();
+        }
+        public virtual void addSomeLifePoints(float lifePoints)
+        {
+            healthValue += lifePoints;
+            healthValue = Mathf.Clamp(healthValue, 0, maxHealthValue);
+        }
+        public virtual void addSomeLifePointsPerc(float lifePointsPerc)//perc in 0-1
+        {
+            addSomeLifePoints(healthValue * Mathf.Clamp01(lifePointsPerc));
+        }
+
+        public void removeLifePointsPerc(float lifePointsPerc)
+        {
+            throw new System.NotImplementedException();
         }
         public virtual bool tryToDealDamage(DamageSourceInfo source,out float damageDealt)
         {
@@ -103,6 +112,15 @@ namespace Base.Game
             }
             return false;
         }
+        #endregion
+        protected void Awake()
+        {
+            //find all death listeners
+            lifeListeners = this.GetComponentsInChildren<Base.Game.IOnLifeChangeActions>();
+            info = GetComponent<Base.AI.Agents.GameplayObjectInfo>();
+            showOnBornEffects();
+        }
+        #region PROTECTED
 
         protected float dealDamageWithSource(DamageSourceInfo.SourceValue source)
         {
@@ -111,7 +129,7 @@ namespace Base.Game
             {
                 if (dv.vunerableTo(source.source))
                 {
-                    dealRawDamage(dv.percReaction * source.value);
+                    removeLifePoints(dv.percReaction * source.value);
                     damageDealt += dv.percReaction * source.value;
                 }
             }
@@ -150,6 +168,6 @@ namespace Base.Game
                 }
             }
         }
-
+        #endregion
     }
 }

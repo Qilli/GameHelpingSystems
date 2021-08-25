@@ -21,6 +21,7 @@ namespace Base.AI.Agents
         public AgentParam<float> baseMoveSpeed = default;
         public float baseMoveSpeed_Min = 1.0f;
         public float baseMoveSpeed_Max = 3.0f;
+
         
 
         public virtual void setParameters()

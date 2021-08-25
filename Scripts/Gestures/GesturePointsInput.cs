@@ -27,6 +27,7 @@ namespace Base.Gestures
 
 
         public List<Point> getPoints() { return gesturePoints.getPoints(); }
+        public bool hasValidPoints() => gesturePoints.getPoints().Count > 0;
 
         public virtual void resetRecording()
         {
