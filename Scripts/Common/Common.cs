@@ -112,7 +112,6 @@ namespace Base.CommonCode
             }
             return false;
         }
-
         public static class FadeAudioSource
         {
             public static IEnumerator StartFade(AudioSource audioSource, float duration, float targetVolume)
@@ -130,8 +129,6 @@ namespace Base.CommonCode
             }
         }
     }
-
-
     // Helper Rect extension methods
     public static class RectExtensions
     {
