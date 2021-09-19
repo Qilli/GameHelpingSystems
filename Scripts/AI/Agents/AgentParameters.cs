@@ -17,6 +17,8 @@ namespace Base.AI.Agents
 
         [Header("Blackboard")]
         public Behaviours.BehaviourTreeController usedTree;
+        [Header("NavMesh")]
+        public bool moveByNavMesh=true;
         [Header("Base Speed")]
         public AgentParam<float> baseMoveSpeed = default;
         public float baseMoveSpeed_Min = 1.0f;

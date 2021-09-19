@@ -48,13 +48,18 @@ namespace Base.AI.Agents
             get => agentKinematicData;
         }
         //gameplaySystem
-        public AIAttackSystem attackSystem;    
+        public AIAttackSystem attackSystem;
+        //navmesh agent
+        public UnityEngine.AI.NavMeshAgent NavAgent { get; private set; } = null;
+        private AgentParameters agentParams;
         public override void init()
         {
             base.init();
             if(!inited)
             {
                 rigid = GetComponent<Rigidbody>();
+                NavAgent = GetComponent<UnityEngine.AI.NavMeshAgent>();
+                agentParams= GetComponent<AgentParameters>();
                 agentKinematicData.set(transform.position, Vector3.zero, KinematicData.DirectionToOrientation(transform.forward), 0);
                 inited = true;
             }
@@ -72,7 +77,10 @@ namespace Base.AI.Agents
         }
         public override void onUpdate(float delta)
         {
+            if(!agentParams.moveByNavMesh)
+            {
             updateSteering();
+            }
         }
 
     }

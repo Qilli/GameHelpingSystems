@@ -1,0 +1,28 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ed288ed28d29c6544ab26aba67c05535, type: 3}
+  m_Name: StopNavMovementTask
+  m_EditorClassIdentifier: 
+  treeOwner: {fileID: 0}
+  taskType: 0
+  children: []
+  parent: {fileID: 0}
+  useAsTaskSourceEditor: 0
+  editorTexture: {fileID: 0}
+  taskTypeName: 
+  description: 
+  rect:
+    serializedVersion: 2
+    x: 20
+    y: 20
+    width: 100
+    height: 100
