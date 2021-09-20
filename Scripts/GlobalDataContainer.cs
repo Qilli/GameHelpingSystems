@@ -14,6 +14,7 @@ namespace Base
         public GameSystem gameSystem;
         public Events.EventsManager eventsManager;
         public Base.TextControl.TextElementsManager textsElementsManager;
+        public Base.ImportantObjectsContainer importantObjectsContainer;
         private static GlobalDataContainer container = null;
 
         public static GlobalDataContainer It

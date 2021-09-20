@@ -3,9 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 namespace Base.AI.Agents
 {
-
-
-
     public class AgentParameters : MonoBehaviour
     {
         [System.Serializable]

@@ -75,11 +75,20 @@ namespace Base.AI.Agents
             transform.Translate(agentKinematicData.velocity*Time.deltaTime,Space.World);     
             agentKinematicData.position = transform.position;
         }
+        public void setInstantlyOrientation(float orientation)
+        {
+            agentKinematicData.orientation=orientation;
+            transform.localEulerAngles = new Vector3(0, agentKinematicData.orientation, 0);
+        }
         public override void onUpdate(float delta)
         {
             if(!agentParams.moveByNavMesh)
             {
             updateSteering();
+            }
+            else
+            {
+            agentKinematicData.position = transform.position; 
             }
         }
 
