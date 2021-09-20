@@ -16,10 +16,10 @@ MonoBehaviour:
   taskType: 0
   children: []
   parent: {fileID: 0}
-  useAsTaskSourceEditor: 0
-  editorTexture: {fileID: 0}
-  taskTypeName: 
-  description: 
+  useAsTaskSourceEditor: 1
+  editorTexture: {fileID: 2800000, guid: 98446e0ed5482ff479c84dbcb5ab6bd6, type: 3}
+  taskTypeName: StopNavMovement
+  description: Stop movement by navmesh
   rect:
     serializedVersion: 2
     x: 20

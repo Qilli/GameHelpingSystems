@@ -37,7 +37,7 @@ namespace Base.Gestures
             return inputSource.isRecording();
         }
 
-        protected virtual void onNewPoint(Point point)
+        protected virtual void onNewPoint(PDollarGestureRecognizer.Point point)
         {
 
         }
