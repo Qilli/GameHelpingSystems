@@ -200,4 +200,33 @@ namespace Base.CommonCode
             GUI.BeginGroup(new Rect(0.0f, kEditorWindowTabHeight, Screen.width, Screen.height));
         }
     }
+
+    //singleton helper
+    public class SingletonBase<T> : MonoBehaviour where T:MonoBehaviour
+    {
+        private static T container=null;
+
+        public static T It
+        {
+            get
+            {
+                if (container == null)
+                {
+                    container = GameObject.FindObjectOfType<T>();
+                }
+
+#if UNITY_EDITOR
+
+                if (container == null)
+                {
+                    Base.Log.Logging.Log("Wrong initialization order!");
+                    Debug.DebugBreak();
+                }
+
+#endif
+                return container;
+            }
+        }
+    }
+
 }
