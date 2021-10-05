@@ -53,7 +53,10 @@ namespace Base.ObjectsControl
         public virtual void onChangeState(GameSystem.GameState newState)
         {
             if (newState == GameSystem.GameState.PLAY) isPaused = false;
-            else isPaused = true;
+            else
+            {
+                isPaused = true;
+            }
 
             foreach (ObjectsManager mgr in managers)
             {

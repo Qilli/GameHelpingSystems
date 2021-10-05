@@ -90,6 +90,8 @@ namespace Base
                         Events.GameOverEvent gameOver = new Events.GameOverEvent(gameOverEventID);
                         gameOver.Sender = this;
                         Base.GlobalDataContainer.It.eventsManager.dispatchEvent(gameOver);
+                        //set flag to global blackboard
+                        Base.AI.Behaviours.GlobalBlackboard.It.setBooleanParam("IsGameOver", true);
                     }
                     break;
             }
