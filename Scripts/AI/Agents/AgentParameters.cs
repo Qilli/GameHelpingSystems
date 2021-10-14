@@ -3,23 +3,19 @@ using System.Collections.Generic;
 using UnityEngine;
 namespace Base.AI.Agents
 {
-    public class AgentParameters : MonoBehaviour
+    public class AgentParameters : MonoBehaviour, IAgentParameters
     {
-        [System.Serializable]
-        public class AgentParam<T>
-        {
-            public T param = default;
-            public string paramName;
-        }
 
         [Header("Blackboard")]
         public Behaviours.BehaviourTreeController usedTree;
         [Header("NavMesh")]
         public bool moveByNavMesh=true;
         [Header("Base Speed")]
-        public AgentParam<float> baseMoveSpeed = default;
+        public IAgentParameters.AgentParam<float> baseMoveSpeed = default;
         public float baseMoveSpeed_Min = 1.0f;
         public float baseMoveSpeed_Max = 3.0f;
+        [Header("Stop movement on Hit")]
+        public bool stopEnemyMovementWhenHit = false;
 
         
 
@@ -35,7 +31,7 @@ namespace Base.AI.Agents
             Behaviours.SharedVariable<T> variable =(Behaviours.SharedVariable < T >) usedTree.Blackboard.getVariableByName(name);
             variable.value = value;
         }
-        public void setParameter<T>(AgentParam<T> param)
+        public void setParameter<T>(IAgentParameters.AgentParam<T> param)
         {
             setParameter<T>(param.paramName, param.param);
         }

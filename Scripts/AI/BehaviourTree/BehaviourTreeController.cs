@@ -26,6 +26,7 @@ namespace Base.AI.Behaviours
         protected BehaviourTreeTaskRuntime rootNode;
         public TreeStatus currentStatusIterator = new TreeStatus();
         protected Blackboard blackboard;
+        private Base.AI.Agents.IAgentParameters agentParametersControl;
 
         public TreeStatus getTreeIterator()
         {
@@ -58,6 +59,9 @@ namespace Base.AI.Behaviours
                     rootNode = source.generateRuntimeNodes(this);
                     clearLastResults();
                     currentStatusIterator.agent = agent;
+                    //set base parameters
+                    agentParametersControl = GetComponent<AI.Agents.IAgentParameters>();
+                    agentParametersControl?.setParameters();
                 }
                 inited = true;
             }
