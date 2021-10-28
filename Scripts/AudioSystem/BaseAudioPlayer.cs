@@ -16,5 +16,6 @@ namespace Base.Audio
         public abstract void stop(AudioSource source);
         public abstract void pause(AudioSource source);
         public abstract void unPause(AudioSource source);
+        public abstract AudioClip getDefaultClip();
     }
 }

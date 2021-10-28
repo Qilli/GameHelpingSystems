@@ -37,5 +37,9 @@ namespace Base.Audio
             source.UnPause();
         }
 
+        public override AudioClip getDefaultClip()
+        {
+            return clip;
+        }
     }
 }

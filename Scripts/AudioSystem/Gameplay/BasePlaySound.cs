@@ -10,14 +10,17 @@ Podstawowy player dźwięku dla gameplayu
 namespace Base.Audio
 {
     [RequireComponent(typeof(AudioSource))]
-    public class BasePlaySound : BaseObject
+    public class BasePlaySound : BaseObject,IPlaySound
     {
         #region PUBLIC PARAMS
         [Header("Parameters")]
         public BaseAudioPlayer audioPlayer;
         public bool playOnStart = false;
         #endregion
+        #region PRIVATE 
         private AudioSource source;
+        #endregion
+        #region PUBLIC FUNC
         public bool IsPaused { get; private set; }
         public AudioSource Source { get { return source; } }
 
@@ -59,6 +62,32 @@ namespace Base.Audio
         {
             return source.isPlaying;
         }
-
+        #endregion
+        #region HELPER
+        void Start()
+        {
+            init();
+        }
+        void Reset()
+        {
+          //  source=gameObject.AddComponent<AudioSource>();
+        //    source.outputAudioMixerGroup = Resources.FindObjectsOfTypeAll<UnityEngine.Audio.AudioMixerGroup>()[0];
+        }
+        void OnValidate()
+        {
+            if(audioPlayer!=null)
+            {
+                if (source == null)
+                {
+                    if ((source = GetComponent<AudioSource>()) == null)
+                    {
+                        source = gameObject.AddComponent<AudioSource>();
+                    }
+                }
+                source.clip = audioPlayer.getDefaultClip();
+                audioPlayer.settings.setSettings(source);
+            }
+        }
+        #endregion
     }
 }

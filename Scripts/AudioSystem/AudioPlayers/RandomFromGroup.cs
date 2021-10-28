@@ -44,5 +44,9 @@ namespace Base.Audio
             return clips[index];
         }
 
+        public override AudioClip getDefaultClip()
+        {
+            return clips[0];
+        }
     }
 }

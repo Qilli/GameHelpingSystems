@@ -6,7 +6,6 @@ using UnityEngine.Audio;
 
 namespace Base.Audio
 {
-
     [CreateAssetMenu(menuName = "EngineAssets/System/Audio/AudioSettings")]
     public class AudioSettings : ScriptableObject
     {
@@ -14,12 +13,14 @@ namespace Base.Audio
         public float globalSoundVolume = 1.0f;
         public float musicSoundVolume = 1.0f;
         public float sfxSoundVolume = 1.0f;
+        public float uiSoundVolume = 1.0f;
 
 
         [Header("Params names")]
         public string mainVolume;
         public string musicVolume;
         public string sfxVolume;
+        public string uiVolume;
 
 
         [Header("Default Fade options")]
@@ -41,7 +42,11 @@ namespace Base.Audio
             musicSoundVolume = v_;
             setSettings();
         }
-
+        public virtual void setUIVolume(float v_)
+        {
+            uiSoundVolume = v_;
+            setSettings();
+        }
         public virtual void setSFXVolume(float v_)
         {
             sfxSoundVolume = v_;
@@ -53,6 +58,7 @@ namespace Base.Audio
             mixer.SetFloat(mainVolume, globalSoundVolume);
             mixer.SetFloat(musicVolume, musicSoundVolume);
             mixer.SetFloat(sfxVolume, sfxSoundVolume);
+            mixer.SetFloat(uiVolume, uiSoundVolume);
         }
 
         public float getValueFromSlider(float value)
