@@ -16,9 +16,13 @@ namespace Base.Audio
         [Header("Parameters")]
         public BaseAudioPlayer audioPlayer;
         public bool playOnStart = false;
+
+
         #endregion
         #region PRIVATE 
         private AudioSource source;
+        private WaitForSeconds waiter = new WaitForSeconds(0.2f);
+        private Base.QTE.QuickTimeEvent qtEventLocal;
         #endregion
         #region PUBLIC FUNC
         public bool IsPaused { get; private set; }
@@ -31,14 +35,27 @@ namespace Base.Audio
                 base.init();
                 source = GetComponent<AudioSource>();
                 audioPlayer.settings.setSettings(source);
+                qtEventLocal = new QTE.QuickTimeEvent(1, 0, stopSound);
                 if (playOnStart) playSound();
                 inited = true;
+
             }
         }
 
         public virtual void playSound()
         {
-            audioPlayer.play(source);
+            if (!isPlaying())
+            {
+                audioPlayer.play(source);
+                if (audioPlayer.settings.detachOnPlay) transform.parent = null;
+                if (!audioPlayer.settings.loop && audioPlayer.settings.destroyAfterPlay) StartCoroutine(destroyAfterPlayCoroutine());
+            }
+        }
+        public void playFor(float playTime)
+        {
+            qtEventLocal.setInterval(playTime);
+            GlobalDataContainer.It.qtEventsControler.addAndStartQTEvent(qtEventLocal);
+            playSound();
         }
 
         public virtual void stopSound()
@@ -64,6 +81,15 @@ namespace Base.Audio
         }
         #endregion
         #region HELPER
+        IEnumerator destroyAfterPlayCoroutine()
+        {
+            while (isPlaying())
+            {
+                yield return waiter;
+            }
+            Destroy(gameObject);
+            yield break;
+        }
         void Start()
         {
             init();
@@ -88,6 +114,7 @@ namespace Base.Audio
                 audioPlayer.settings.setSettings(source);
             }
         }
+
         #endregion
     }
 }

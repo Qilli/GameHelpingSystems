@@ -11,8 +11,10 @@ namespace Base.AI.Agents
             public T param = default;
             public string paramName;
         }
+        public void init();
         public void setParameters();
         public void setParameter<T>(string name, T value);
         public void setParameter<T>(AgentParam<T> param);
+        public Behaviours.SharedVariable<T> getParameter<T>(string name_);
     }
 }

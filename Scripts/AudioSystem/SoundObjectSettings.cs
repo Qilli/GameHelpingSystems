@@ -39,6 +39,8 @@ namespace Base.Audio
         public float minDistance = 10;
         public float maxDistance = 15;
         public bool loop = false;
+        public bool detachOnPlay = false;
+        public bool destroyAfterPlay = false;
         /// <summary>
         /// jeśli mamy grupowe odgrywanie to w momencie kiedy dany sample przestanie grać ile czekamy aż zacznie grać następny
         /// </summary>

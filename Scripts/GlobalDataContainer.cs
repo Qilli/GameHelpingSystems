@@ -15,6 +15,7 @@ namespace Base
         public Events.EventsManager eventsManager;
         public Base.TextControl.TextElementsManager textsElementsManager;
         public Base.ImportantObjectsContainer importantObjectsContainer;
+        public Base.QTE.QTEController qtEventsControler;
         private static GlobalDataContainer container = null;
 
         public static GlobalDataContainer It

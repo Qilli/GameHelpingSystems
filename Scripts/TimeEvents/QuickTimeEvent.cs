@@ -21,7 +21,7 @@ namespace Base.QTE
         protected System.Action<System.Object> listenerObj;
         protected System.Object obj;
         public QTEState getState { get { return state; } private set { state = value; } }
-
+        public void setInterval(float interval_) => interval = interval_;
         public QuickTimeEvent(int repeatCount_, float interval_, System.Action listener_)
         {
             repeatCount = repeatCount_;

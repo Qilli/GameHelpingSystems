@@ -61,7 +61,7 @@ namespace Base.AI.Behaviours
                     currentStatusIterator.agent = agent;
                     //set base parameters
                     agentParametersControl = GetComponent<AI.Agents.IAgentParameters>();
-                    agentParametersControl?.setParameters();
+                    agentParametersControl?.init();
                 }
                 inited = true;
             }
