@@ -24,6 +24,7 @@ namespace Base
         public Events.GameEventID killedPlayerEventID;
         [Header("Events to sent")]
         public Events.GameEventID gameOverEventID;
+        #region PUBLIC FUNCTIONS
         public override void init()
         {
             base.init();
@@ -86,10 +87,7 @@ namespace Base
                 case GameState.GAME_OVER:
                     {
                         Physics2D.simulationMode = SimulationMode2D.Script;
-                        //send game over event
-                        Events.GameOverEvent gameOver = new Events.GameOverEvent(gameOverEventID);
-                        gameOver.Sender = this;
-                        Base.GlobalDataContainer.It.eventsManager.dispatchEvent(gameOver);
+                        sendGameOverEvent();
                         //set flag to global blackboard
                         Base.AI.Behaviours.GlobalBlackboard.It.setBooleanParam("IsGameOver", true);
                     }
@@ -99,6 +97,19 @@ namespace Base
             gameState = newState;
 
         }
+        #endregion
+        #region PRIVATE FUNCTIONS
+        void sendGameOverEvent()
+        {
+            //send game over event
+            if (gameOverEventID != null)
+            {
+                Events.GameOverEvent gameOver = new Events.GameOverEvent(gameOverEventID);
+                gameOver.Sender = this;
+                Base.GlobalDataContainer.It.eventsManager.dispatchEvent(gameOver);
+            }
+        }
+        #endregion
     }
 
 }
