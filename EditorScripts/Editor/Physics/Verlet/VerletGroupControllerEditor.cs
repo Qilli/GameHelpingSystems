@@ -29,6 +29,10 @@ namespace Base.Editor.Physics.Verlet
 
         public override void OnInspectorGUI()
         {
+            if(localCtrl==null)
+            {
+                localCtrl = target as VerletGroupController;
+            }
             DrawDefaultInspector();
             drawActionButtons();
             drawSelectedPoint();

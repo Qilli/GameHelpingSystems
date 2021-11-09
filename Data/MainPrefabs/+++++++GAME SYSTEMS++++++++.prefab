@@ -149,7 +149,7 @@ MonoBehaviour:
   mgr: {fileID: 11400000, guid: f0adbc740ccb27d44af1e33967c7550a, type: 2}
   priority: 10
   inited: 0
-  settings: {fileID: 11400000, guid: 5e49cb1f054d14d4a8bcad77ca21ac11, type: 2}
+  settings: {fileID: 0}
   timePauseStarted: 0
 --- !u!1 &582372140693501104
 GameObject:
@@ -242,7 +242,7 @@ MonoBehaviour:
   inited: 0
   gameState: 0
   objectsMgr: {fileID: 582372140781924943}
-  killedPlayerEventID: {fileID: 11400000, guid: cf07ce864abba944986c27556a262a35, type: 2}
+  killedPlayerEventID: {fileID: 0}
   gameOverEventID: {fileID: 11400000, guid: 13305a792d09e184b8167095f87ffad6, type: 2}
 --- !u!114 &146485299
 MonoBehaviour:
@@ -257,7 +257,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   element:
-    eventID: {fileID: 11400000, guid: cf07ce864abba944986c27556a262a35, type: 2}
+    eventID: {fileID: 11400000, guid: 13305a792d09e184b8167095f87ffad6, type: 2}
     listeners:
       m_PersistentCalls:
         m_Calls: []

@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 namespace Base.Physics.Verlet
 {
+    [System.Serializable]
     public class VerletGroupController : Base.ObjectsControl.BaseObject
     {
         #region CLASSES
@@ -26,7 +27,7 @@ namespace Base.Physics.Verlet
         public bool simulationActive = true;
         #endregion
         #region PRIVATE PARAMS
-        [SerializeField, HideInInspector]
+        [SerializeField]
         private List<VerletPoint> points = new List<VerletPoint>();
         #endregion
 
