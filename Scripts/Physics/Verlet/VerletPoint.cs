@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -15,6 +16,13 @@ namespace Base.Physics.Verlet
         private Vector3 position=Vector3.zero;
         private Vector3 prevPosition=Vector3.zero;
         private bool isLocked=false;
+
+        internal void movePointBy(float vx, float vy, float vz)
+        {
+            position.x += vx;
+            position.y += vy;
+            position.z += vz;
+        }
         #endregion
 
         #region PUBLIC FUNC

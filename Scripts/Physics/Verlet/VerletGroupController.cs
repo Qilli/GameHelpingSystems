@@ -62,9 +62,30 @@ namespace Base.Physics.Verlet
         public override void onFixedUpdate(float fixedDelta)
         {
             base.onFixedUpdate(fixedDelta);
+            if(simulationActive)
+            {
+                updatePoints();
+            }
         }
+
         #endregion
         #region PRIVATE FUNC
+        private void updatePoints()
+        {
+            float vx = 0;
+            float vy = 0;
+            float vz = 0;
+            VerletPoint tempPoint = null;
+            for(int a=0;a<points.Count;++a)
+            {
+                tempPoint = points[a];
+                vx = tempPoint.Position.x- tempPoint.PrevPosition.x;
+                vy = tempPoint.Position.y - tempPoint.PrevPosition.y;
+                vz = tempPoint.Position.z - tempPoint.PrevPosition.z;
+                tempPoint.movePointBy(vx, vy, vz);
+                tempPoint.PrevPosition = tempPoint.Position;
+            }
+        }
         #endregion
     }
 }
