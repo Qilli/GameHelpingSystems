@@ -1,0 +1,28 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3eb06c9bd20fea64d8daed5f1f4c985b, type: 3}
+  m_Name: AudioSettings
+  m_EditorClassIdentifier: 
+  mixer: {fileID: 24100000, guid: 88da23c5559c5b642b41eab2311c522b, type: 2}
+  globalSoundVolume: 1
+  musicSoundVolume: 1
+  sfxSoundVolume: 1
+  uiSoundVolume: 1
+  mainVolume: MainVolume
+  musicVolume: MusicVolume
+  sfxVolume: SfxVolume
+  uiVolume: UIVolume
+  fadeVolumeDecrease: 1
+  fadeMusicDecrease: 1
+  randomizedPitch: 0
+  pitchLowerOffset: 0.05
+  pitchUpperOffset: 0.05
