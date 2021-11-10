@@ -149,7 +149,7 @@ MonoBehaviour:
   mgr: {fileID: 11400000, guid: f0adbc740ccb27d44af1e33967c7550a, type: 2}
   priority: 10
   inited: 0
-  settings: {fileID: 0}
+  settings: {fileID: 11400000, guid: 5e49cb1f054d14d4a8bcad77ca21ac11, type: 2}
   timePauseStarted: 0
 --- !u!1 &582372140693501104
 GameObject:
