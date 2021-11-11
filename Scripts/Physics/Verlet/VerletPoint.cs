@@ -1,29 +1,37 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
-public class VerletPoint : MonoBehaviour
+namespace Base.Physics.Verlet
 {
-    #region PUBLIC PARAMS
-
-    #endregion
-    #region PRIVATE PARAMS
-
-    #endregion
-
-    #region PUBLIC FUNC
-    #endregion
-    #region PRIVATE FUNC
-    #endregion
-    // Start is called before the first frame update
-    void Start()
+    [System.Serializable]
+    public class VerletPoint
     {
-        
-    }
+        #region PUBLIC PARAMS
+        public Vector3 Position { get => position; set => position = value; } 
+        public Vector3 PrevPosition { get => prevPosition; set => prevPosition = value; }
+        public bool IsLocked { get => isLocked; set => isLocked = value; }
+        #endregion
+        #region PRIVATE PARAMS
+        [SerializeField]
+        private Vector3 position=Vector3.zero;
+        [SerializeField]
+        private Vector3 prevPosition=Vector3.zero;
+        [SerializeField]
+        private bool isLocked=false;
 
-    // Update is called once per frame
-    void Update()
-    {
-        
+        internal void movePointBy(float vx, float vy, float vz)
+        {
+            position.x += vx;
+            position.y += vy;
+            position.z += vz;
+        }
+        #endregion
+
+        #region PUBLIC FUNC
+        #endregion
+        #region PRIVATE FUNC
+        #endregion
+
     }
 }
