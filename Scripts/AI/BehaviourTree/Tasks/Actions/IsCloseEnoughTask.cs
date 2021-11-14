@@ -66,15 +66,15 @@ namespace Base.AI.Behaviours
             {
                 return lastResult = TaskResult.FAIL;
             }
-            Vector3 dir = new Vector3(useXAxis?target.value.position.x-controller.agent.AgentKinematics.position.x:0,
-                useYAxis ? target.value.position.y - controller.agent.AgentKinematics.position.y : 0,
-                useZAxis ? target.value.position.z - controller.agent.AgentKinematics.position.z : 0);
+            Vector3 dir = new Vector3(useXAxis?target.value.position.x-controller.agent.AgentKinematics.Position.x:0,
+                useYAxis ? target.value.position.y - controller.agent.AgentKinematics.Position.y : 0,
+                useZAxis ? target.value.position.z - controller.agent.AgentKinematics.Position.z : 0);
 
             if(dir.magnitude <= distance.value)
             {
                 if(resetAgentVelocity)
                 {
-                    controller.agent.AgentKinematics.velocity = Vector3.zero;
+                    controller.agent.AgentKinematics.Velocity = Vector3.zero;
                 }
                 return lastResult = TaskResult.SUCCESS;
             }
