@@ -11,39 +11,14 @@ namespace Base.AI.Agents
         public Vector3 rotation;
     }
 
-    public class KinematicData
-    {
-        public Vector3 position;
-        public Vector3 velocity;
-        public float orientation;
-        public float rotation;
-
-        public void set(Vector3 position_,Vector3 velocity_,float orientation_,float rotation_)
-        {
-            position = position_;
-            velocity = velocity_;
-            orientation = orientation_;
-            rotation = rotation_;
-        }
-
-        public static float DirectionToOrientation(Vector3 direction)
-        {
-            return Mathf.Atan2(direction.x, direction.z)*Mathf.Rad2Deg;
-        }
-
-        public static Vector3 OrientationToDirection(float orientation)    
-        {
-            return new Vector3(Mathf.Sin(orientation*Mathf.Deg2Rad), 0, Mathf.Cos(orientation * Mathf.Deg2Rad));
-        }
-    }
     [RequireComponent(typeof(Rigidbody))]
     [RequireComponent(typeof(AIAttackSystem))]
     public class AIAgent : Base.ObjectsControl.BaseObject
     {
 
-        private KinematicData agentKinematicData = new KinematicData();
+        private Physics.KinematicAgentData agentKinematicData = new Physics.KinematicAgentData();
         private Rigidbody rigid;
-        public KinematicData AgentKinematics
+        public Physics.KinematicAgentData AgentKinematics
         {
             get => agentKinematicData;
         }
@@ -60,7 +35,7 @@ namespace Base.AI.Agents
                 rigid = GetComponent<Rigidbody>();
                 NavAgent = GetComponent<UnityEngine.AI.NavMeshAgent>();
                 agentParams= GetComponent<AgentParameters>();
-                agentKinematicData.set(transform.position, Vector3.zero, KinematicData.DirectionToOrientation(transform.forward), 0);
+                agentKinematicData.set(transform.position, Vector3.zero, Physics.KinematicAgentData.DirectionToOrientation(transform.forward), 0);
                 inited = true;
             }
         }
@@ -71,14 +46,14 @@ namespace Base.AI.Agents
         }
         public virtual void updateSteering()
         {
-            transform.localEulerAngles = new Vector3(0, agentKinematicData.orientation, 0);
-            transform.Translate(agentKinematicData.velocity*Time.deltaTime,Space.World);     
-            agentKinematicData.position = transform.position;
+            transform.localEulerAngles = new Vector3(0, agentKinematicData.OrientationHorizontal, 0);
+            transform.Translate(agentKinematicData.Velocity*Time.deltaTime,Space.World);     
+            agentKinematicData.Position = transform.position;
         }
         public void setInstantlyOrientation(float orientation)
         {
-            agentKinematicData.orientation=orientation;
-            transform.localEulerAngles = new Vector3(0, agentKinematicData.orientation, 0);
+            agentKinematicData.OrientationHorizontal=orientation;
+            transform.localEulerAngles = new Vector3(0, agentKinematicData.OrientationHorizontal, 0);
         }
         public override void onUpdate(float delta)
         {
@@ -88,7 +63,7 @@ namespace Base.AI.Agents
             }
             else
             {
-            agentKinematicData.position = transform.position; 
+            agentKinematicData.Position = transform.position; 
             }
         }
 

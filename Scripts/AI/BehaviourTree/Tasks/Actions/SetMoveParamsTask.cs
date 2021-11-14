@@ -43,7 +43,7 @@ namespace Base.AI.Behaviours
             if (hasReadyResult(controller)) return lastResult;
 
             //we need to look at our target, force it on instant
-            controller.agent.AgentKinematics.velocity = targetVelocity.value;
+            controller.agent.AgentKinematics.Velocity = targetVelocity.value;
             //cache result
             return lastResult = TaskResult.SUCCESS;
         }

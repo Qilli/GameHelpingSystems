@@ -45,8 +45,8 @@ namespace Base.AI.Behaviours
                 //stop nav
                 controller.agent.NavAgent.isStopped = true;
                 //we need to look at our target, force it on instant
-                controller.agent.AgentKinematics.velocity = Vector3.zero;
-                controller.agent.AgentKinematics.rotation = 0;
+                controller.agent.AgentKinematics.Velocity = Vector3.zero;
+                controller.agent.AgentKinematics.RotationHorizontal = 0;
             }
             //cache result
             return lastResult = TaskResult.SUCCESS;

@@ -126,37 +126,32 @@ namespace Base.AI.Behaviours
                 //target direction
                 Vector3 dir =
                     new Vector3(targetPos.position.x -
-                        controller.agent.AgentKinematics.position.x,
+                        controller.agent.AgentKinematics.Position.x,
                         0,
                         targetPos.position.z -
-                        controller.agent.AgentKinematics.position.z);
+                        controller.agent.AgentKinematics.Position.z);
 
                 //check if are within a radius
                 if (dir.magnitude <= targetRadius)
                 {
                     //already on place
-                    controller.agent.AgentKinematics.velocity = Vector3.zero;
-                    controller.agent.AgentKinematics.rotation = 0;
+                    controller.agent.AgentKinematics.Velocity = Vector3.zero;
+                    controller.agent.AgentKinematics.RotationHorizontal = 0;
                     return lastResult = TaskResult.SUCCESS;
                 }
 
                 //still need to move
                 Vector3 velocity = dir.normalized * speed;
                 Debug
-                    .DrawLine(controller.agent.AgentKinematics.position,
-                    controller.agent.AgentKinematics.position + velocity,
+                    .DrawLine(controller.agent.AgentKinematics.Position,
+                    controller.agent.AgentKinematics.Position + velocity,
                     Color.red,
                     0.1f);
 
                 //we need to look at our target, force it on instant
-                controller.agent.AgentKinematics.velocity = velocity;
-                controller.agent.AgentKinematics.orientation =
-                    Base
-                        .AI
-                        .Agents
-                        .KinematicData
-                        .DirectionToOrientation(dir.normalized);
-                controller.agent.AgentKinematics.rotation = 0;
+                controller.agent.AgentKinematics.Velocity = velocity;
+                controller.agent.AgentKinematics.OrientationHorizontal = Base.Physics.KinematicAgentData.DirectionToOrientation(dir.normalized);
+                controller.agent.AgentKinematics.RotationHorizontal = 0;
             }
 
             //cache result
