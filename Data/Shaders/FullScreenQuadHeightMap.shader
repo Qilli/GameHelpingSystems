@@ -3,6 +3,7 @@ Shader "BaseEngineShaders/FullScreenQuadHeightMap"
     Properties
     {
         _MainTex ("Texture", 2D) = "white" {}
+        _NoiseTex ("Noise Texture", 2D) = "black"{}
     }
     SubShader
     {
@@ -14,8 +15,6 @@ Shader "BaseEngineShaders/FullScreenQuadHeightMap"
             CGPROGRAM
             #pragma vertex vert
             #pragma fragment frag
-            // make fog work
-            #pragma multi_compile_fog
 
             #include "UnityCG.cginc"
 
@@ -32,6 +31,7 @@ Shader "BaseEngineShaders/FullScreenQuadHeightMap"
             };
 
             sampler2D _MainTex;
+            sampler2D _NoiseTex;
             float4 _MainTex_ST;
 
             v2f vert (appdata v)
@@ -44,9 +44,11 @@ Shader "BaseEngineShaders/FullScreenQuadHeightMap"
 
             fixed4 frag (v2f i) : SV_Target
             {
-                // sample the texture
-                fixed4 col = tex2D(_MainTex, i.uv);
-                return float4(i.uv.x,i.uv.y,0,1);
+                //transform position to center
+                float u =frac(smoothstep(0.0,1,abs( (i.uv.x - 0.5) * 2)  ))*0.6f;
+                float3 heightFromNoise = tex2D(_NoiseTex,i.uv);
+                u+=heightFromNoise*0.5f;
+                return float4(u.xxx,1);
             }
             ENDCG
         }

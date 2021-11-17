@@ -13,6 +13,7 @@ namespace Base.Editor
         private Color currentWarningColor = Color.red;
         private Texture2D mapTexture = null;
         private RenderTexture renderTexture = null;
+        private Texture2D noiseTextureForHeight=null;
         private Mesh fullScreenQuad = null;
         private int layerRender = 0x10000000;
         [MenuItem("Window/Procedural Heightmap Generator")]
@@ -43,6 +44,9 @@ namespace Base.Editor
 
         private void renderQuadMesh()
         {
+            //set noise texture
+            usedMaterial.SetPass(0);
+            usedMaterial.SetTexture("_NoiseTex",noiseTextureForHeight);
             Graphics.Blit(mapTexture, renderTexture, usedMaterial);
         }
 
@@ -64,11 +68,17 @@ namespace Base.Editor
             GUILayout.BeginVertical();
             texSize = EditorGUILayout.Vector2IntField("Texture Size:", texSize);
             usedMaterial = (Material)EditorGUILayout.ObjectField(usedMaterial,typeof(Material),false);
+            noiseTextureForHeight = (Texture2D)EditorGUILayout.ObjectField(noiseTextureForHeight,typeof(Texture2D),false);
             if (GUILayout.Button("Generate"))
             {
                 if (texSize.x <= 0 || texSize.y <= 0)
                 {
                     currentWarning = "Wrong texture size! Texture width and height has to be >0";
+                    currentWarningColor = Color.red;
+                }
+                else if(noiseTextureForHeight==null || usedMaterial ==null)
+                {
+                    currentWarning = "Material or noise texture is equal to null";
                     currentWarningColor = Color.red;
                 }
                 else
