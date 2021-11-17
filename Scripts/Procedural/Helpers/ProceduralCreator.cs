@@ -103,6 +103,33 @@ namespace Base.Procedural.Creator
             return mesh;
 
         }
+        public static Mesh CreateFullScreenQuad(string meshName="ScreenQuadMesh")
+        {
+            Mesh m = new Mesh();
+            Vector3[] positions = new Vector3[]
+            {
+                new Vector3(-1,-1,1),
+                new Vector3(-1,1,1),
+                new Vector3(1,1,1),
+                new Vector3(1,-1,1)
+            };
+            int[] indices =
+            {
+                0,1,2,
+                1,2,3
+            };
+            Vector2[] uvs =
+            {
+                new Vector2(0,0),
+                new Vector2(0,1),
+                new Vector2(1,1),
+                new Vector2(1,0)
+            };
+            m.vertices = positions;
+            m.triangles = indices;
+            m.uv = uvs;
+            return m;
+        }
 
         private static Vector3 getUnitVectorByAngle(float angRad)
         {
