@@ -130,7 +130,7 @@ namespace Base.Editor
 
         private void OnGUI()
         {
-            GUILayout.BeginVertical("Noise Generator");
+            GUILayout.BeginVertical();
             GUILayout.BeginVertical();
             texSize = EditorGUILayout.Vector2Field("Texture Size:", texSize);
             positionMultiplier = EditorGUILayout.Slider(positionMultiplier,0.0f,100.0f);

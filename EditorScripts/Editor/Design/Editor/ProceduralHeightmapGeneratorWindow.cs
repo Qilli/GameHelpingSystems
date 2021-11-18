@@ -58,8 +58,8 @@ namespace Base.Editor
 
         void OnDestroy()
         {
-            Texture2D.DestroyImmediate(mapTexture,true);
-            renderTexture.Release();
+            if(mapTexture) Texture2D.DestroyImmediate(mapTexture, true);
+            if(renderTexture)renderTexture.Release();
         }
 
         private void OnGUI()

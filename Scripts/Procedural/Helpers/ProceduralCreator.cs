@@ -130,7 +130,7 @@ namespace Base.Procedural.Creator
             m.uv = uvs;
             return m;
         }
-        public static Mesh CreateMeshFromHeightMap(Texture2D heightmap,float segmentWidth=1, float segmentLength=1,bool smoothed=true,string meshName="HeightmapMesh")
+        public static Mesh CreateMeshFromHeightMap(Texture2D heightmap,float segmentWidth=1, float segmentLength=1,float heightMultiplier=1,bool smoothed=true,string meshName="HeightmapMesh")
         {
             Mesh m = new Mesh();
             m.name=meshName;
@@ -143,7 +143,6 @@ namespace Base.Procedural.Creator
             {
                 vertexCount=heightmap.width * heightmap.height;
                 triCount=(heightmap.width-1)*(heightmap.height-1)*2;
-                Debug.Log("tri cound: "+triCount+" vertex cound: "+vertexCount+"width: "+heightmap.width+" height: "+heightmap.height);
                 vertices = new Vector3[vertexCount];
                 uvs = new Vector2[vertexCount];
                 indices = new int[triCount*3];
@@ -152,30 +151,28 @@ namespace Base.Procedural.Creator
                     int column = i % heightmap.width;
                     int row = i/heightmap.width;
                     vertices[i].x=column*segmentWidth;
-                    vertices[i].y=heightmap.GetPixel(column,row).r;
+                    vertices[i].y=heightmap.GetPixel(column,row).r * heightMultiplier;
                     vertices[i].z = row* segmentLength;
                     uvs[i].x = (float)column/(float)(heightmap.width-1);
                     uvs[i].y = (float)row/(float)(heightmap.height-1);
-                    Debug.Log("vertex: "+i+" "+vertices[i]);
                 }
                 int index=0;
                 int vertexIndex=0;
                
                 //triangles
-                for (int i = 0; i < heightmap.height-1; i+=1)
+                for (int i = 0; i < heightmap.height-1; i++)
                 {
                     for (int j = 0; j < heightmap.width-1; j++)
                     {
-                    vertexIndex= i * heightmap.height + j;
+                    vertexIndex= i * heightmap.width + j;
                     indices[index++]=vertexIndex;
                     indices[index++]=vertexIndex+ heightmap.width;
                     indices[index++]=vertexIndex + 1;
-                    Debug.Log("triangle: "+i);
 
                     indices[index++]=vertexIndex+1;
                     indices[index++]=vertexIndex+ heightmap.width;
                     indices[index++]=vertexIndex + heightmap.width + 1;
-                    Debug.Log("triangle: "+(i+1));  
+
                     }             
                 }
 
