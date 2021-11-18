@@ -10,11 +10,11 @@ namespace Base.Procedural.Creator
             Angular,
             Top
         }
-        public static Mesh CreateQuadMesh(float width, float length,string meshName="QuadMesh")
+        public static Mesh CreateQuadMesh(float width, float length, string meshName = "QuadMesh")
         {
             Mesh mesh = new Mesh();
             mesh.name = meshName;
-            
+
             Vector3[] positions =
             {
                 new Vector3(-width*0.5f,0,-length*0.5f),
@@ -45,7 +45,7 @@ namespace Base.Procedural.Creator
             mesh.uv = uvs;
             return mesh;
         }
-        public static Mesh CreateRing(UVProjectionType projType,float innerRadius,float thickness,int angularSegments=3,string meshName="RingMesh")
+        public static Mesh CreateRing(UVProjectionType projType, float innerRadius, float thickness, int angularSegments = 3, string meshName = "RingMesh")
         {
             angularSegments = Mathf.Clamp(angularSegments, 3, 32);
             Mesh mesh = new Mesh();
@@ -54,13 +54,13 @@ namespace Base.Procedural.Creator
             Vector3[] vertices = new Vector3[verticesCount];
             Vector3[] normals = new Vector3[verticesCount];
             Vector2[] uvs = new Vector2[verticesCount];
-            for(int a=0;a< verticesCount; a+=2)
+            for (int a = 0; a < verticesCount; a += 2)
             {
-                float perc = (a / ((float)vertices.Length-2));
-                float angleRad = perc * Mathf.PI *2;
+                float perc = (a / ((float)vertices.Length - 2));
+                float angleRad = perc * Mathf.PI * 2;
                 Vector3 dir = getUnitVectorByAngle(angleRad);
-                vertices[a] = transformVector(dir*innerRadius, Quaternion.identity, Vector3.zero);
-                vertices[a+1] = transformVector(dir * (innerRadius+thickness), Quaternion.identity, Vector3.zero);
+                vertices[a] = transformVector(dir * innerRadius, Quaternion.identity, Vector3.zero);
+                vertices[a + 1] = transformVector(dir * (innerRadius + thickness), Quaternion.identity, Vector3.zero);
                 normals[a] = Vector3.up;
                 normals[a + 1] = Vector3.up;
                 switch (projType)
@@ -74,11 +74,11 @@ namespace Base.Procedural.Creator
                     case UVProjectionType.Top:
                         uvs[a].x = dir.x * (innerRadius / (innerRadius + thickness)) * 0.5f + 0.5f;
                         uvs[a].y = dir.z * (innerRadius / (innerRadius + thickness)) * 0.5f + 0.5f;
-                        uvs[a+1].x = dir.x * 0.5f + 0.5f;
-                        uvs[a+1].y = dir.z * 0.5f + 0.5f;
+                        uvs[a + 1].x = dir.x * 0.5f + 0.5f;
+                        uvs[a + 1].y = dir.z * 0.5f + 0.5f;
                         break;
                 }
-             
+
             }
             mesh.vertices = vertices;
             mesh.normals = normals;
@@ -86,16 +86,16 @@ namespace Base.Procedural.Creator
             int[] triangles = new int[angularSegments * 2 * 3];
             int index = 0;
             int temp = 0;
-            for (int a=0;a<angularSegments;a++)
+            for (int a = 0; a < angularSegments; a++)
             {
-                temp = a *2;
-                triangles[index] =  temp;
-                triangles[index+1] = (temp+3) ;
-                triangles[index+2] = temp+1;
+                temp = a * 2;
+                triangles[index] = temp;
+                triangles[index + 1] = (temp + 3);
+                triangles[index + 2] = temp + 1;
                 index += 3;
                 triangles[index] = temp;
-                triangles[index + 1] = (temp+2);
-                triangles[index + 2] = (temp + 3) ;
+                triangles[index + 1] = (temp + 2);
+                triangles[index + 2] = (temp + 3);
                 index += 3;
             }
 
@@ -103,7 +103,7 @@ namespace Base.Procedural.Creator
             return mesh;
 
         }
-        public static Mesh CreateFullScreenQuad(string meshName="ScreenQuadMesh")
+        public static Mesh CreateFullScreenQuad(string meshName = "ScreenQuadMesh")
         {
             Mesh m = new Mesh();
             Vector3[] positions = new Vector3[]
@@ -130,66 +130,73 @@ namespace Base.Procedural.Creator
             m.uv = uvs;
             return m;
         }
-        public static Mesh CreateMeshFromHeightMap(Texture2D heightmap,float segmentWidth=1, float segmentLength=1,float heightMultiplier=1,bool smoothed=true,string meshName="HeightmapMesh")
+        public static Mesh CreateMeshFromHeightMap(Texture2D heightmap, Base.Curves.ICurve meshOnCurve = null, float segmentWidth = 1, float segmentLength = 1, float heightMultiplier = 1, string meshName = "HeightmapMesh")
         {
             Mesh m = new Mesh();
-            m.name=meshName;
+            m.name = meshName;
             Vector3[] vertices = null;
             Vector2[] uvs = null;
-            int[] indices=null;
-            int vertexCount=0;
-            int triCount=0;
-            if(smoothed)
+            int[] indices = null;
+            int vertexCount = 0;
+            int triCount = 0;
+
+            vertexCount = heightmap.width * heightmap.height;
+            triCount = (heightmap.width - 1) * (heightmap.height - 1) * 2;
+            vertices = new Vector3[vertexCount];
+            uvs = new Vector2[vertexCount];
+            indices = new int[triCount * 3];
+
+            float timeCurve = 0;
+            for (var i = 0; i < vertexCount; i++)
             {
-                vertexCount=heightmap.width * heightmap.height;
-                triCount=(heightmap.width-1)*(heightmap.height-1)*2;
-                vertices = new Vector3[vertexCount];
-                uvs = new Vector2[vertexCount];
-                indices = new int[triCount*3];
-                for (var i = 0; i < vertexCount; i++)
+                int column = i % heightmap.width;
+                int row = i / heightmap.width;
+                timeCurve = ((float)(i / heightmap.width)) / heightmap.height;
+                if (meshOnCurve != null)
                 {
-                    int column = i % heightmap.width;
-                    int row = i/heightmap.width;
-                    vertices[i].x=column*segmentWidth;
-                    vertices[i].y=heightmap.GetPixel(column,row).r * heightMultiplier;
-                    vertices[i].z = row* segmentLength;
-                    uvs[i].x = (float)column/(float)(heightmap.width-1);
-                    uvs[i].y = (float)row/(float)(heightmap.height-1);
+                    Vector3 centerPos=meshOnCurve.getPointOnCurve(timeCurve);
+                    Quaternion curveOrientation = meshOnCurve.getCurveOrientationAt(timeCurve);
                 }
-                int index=0;
-                int vertexIndex=0;
-               
-                //triangles
-                for (int i = 0; i < heightmap.height-1; i++)
-                {
-                    for (int j = 0; j < heightmap.width-1; j++)
-                    {
-                    vertexIndex= i * heightmap.width + j;
-                    indices[index++]=vertexIndex;
-                    indices[index++]=vertexIndex+ heightmap.width;
-                    indices[index++]=vertexIndex + 1;
-
-                    indices[index++]=vertexIndex+1;
-                    indices[index++]=vertexIndex+ heightmap.width;
-                    indices[index++]=vertexIndex + heightmap.width + 1;
-
-                    }             
-                }
-
-                m.vertices=vertices;
-                m.uv=uvs;
-                m.triangles=indices;
-                m.RecalculateNormals();
+                vertices[i].x = column * segmentWidth;
+                vertices[i].y = heightmap.GetPixel(column, row).r * heightMultiplier;
+                vertices[i].z = row * segmentLength;
+                uvs[i].x = (float)column / (float)(heightmap.width - 1);
+                uvs[i].y = (float)row / (float)(heightmap.height - 1);
             }
+            int index = 0;
+            int vertexIndex = 0;
+
+            //triangles
+            for (int i = 0; i < heightmap.height - 1; i++)
+            {
+                for (int j = 0; j < heightmap.width - 1; j++)
+                {
+                    vertexIndex = i * heightmap.width + j;
+                    indices[index++] = vertexIndex;
+                    indices[index++] = vertexIndex + heightmap.width;
+                    indices[index++] = vertexIndex + 1;
+
+                    indices[index++] = vertexIndex + 1;
+                    indices[index++] = vertexIndex + heightmap.width;
+                    indices[index++] = vertexIndex + heightmap.width + 1;
+
+                }
+            }
+
+            m.vertices = vertices;
+            m.uv = uvs;
+            m.triangles = indices;
+            m.RecalculateNormals();
+
             return m;
         }
         private static Vector3 getUnitVectorByAngle(float angRad)
         {
             return new Vector3(Mathf.Cos(angRad), 0, Mathf.Sin(angRad));
         }
-        private static Vector3 transformVector(in Vector3 inVec,Quaternion rot,Vector3 translation)
+        private static Vector3 transformVector(in Vector3 inVec, Quaternion rot, Vector3 translation)
         {
-            return translation+rot*inVec;
+            return translation + rot * inVec;
         }
     }
 }
