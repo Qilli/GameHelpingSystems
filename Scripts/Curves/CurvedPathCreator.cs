@@ -28,6 +28,10 @@ namespace Base.Curves
         {
             curvedPath.setClosePath(!curvedPath.ClosedPath);
         }
+        public void resetPath()
+        {
+            curvedPath.resetPath();
+        }
         #endregion
         #region PRIVATE FUNC
         private void Update()

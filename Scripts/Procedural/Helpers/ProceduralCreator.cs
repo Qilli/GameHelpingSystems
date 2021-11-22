@@ -267,6 +267,7 @@ namespace Base.Procedural.Creator
 
             return m;
         }
+      //  public static Mesh[] createPlanesMeshOnSpline(Base.Curves.ICurve)
         private static Vector3 getUnitVectorByAngle(float angRad)
         {
             return new Vector3(Mathf.Cos(angRad), 0, Mathf.Sin(angRad));

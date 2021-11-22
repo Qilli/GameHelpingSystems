@@ -203,7 +203,7 @@ namespace Base.Editor.Curves
             }
             if (GUILayout.Button("Reset Path"))
             {
-
+                creatorObj.resetPath();
             }
            matchTangentsOnEdit= GUILayout.Toggle(matchTangentsOnEdit, "Match tangents on edit");
 
