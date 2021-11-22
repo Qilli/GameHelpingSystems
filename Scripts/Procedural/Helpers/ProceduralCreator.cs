@@ -130,7 +130,77 @@ namespace Base.Procedural.Creator
             m.uv = uvs;
             return m;
         }
-        public static Mesh CreateMeshFromHeightMap(Texture2D heightmap, Base.Curves.ICurve meshOnCurve = null, float segmentWidth = 1, float segmentLength = 1, float heightMultiplier = 1, string meshName = "HeightmapMesh")
+        public static Mesh CreateMeshFromHeightMap(Texture2D heightmap,in Vector3 startPos,in Vector3[] inputEdge,out Vector3[] endEdge, float segmentWidth = 1, float segmentLength = 1, float heightMultiplier = 1, string meshName = "HeightmapMesh")
+        {
+            Mesh m = new Mesh();
+            m.name = meshName;
+            Vector3[] vertices = null;
+            Vector2[] uvs = null;
+            int[] indices = null;
+            int vertexCount = 0;
+            int triCount = 0;
+
+            vertexCount = heightmap.width * heightmap.height;
+            triCount = (heightmap.width - 1) * (heightmap.height - 1) * 2;
+            vertices = new Vector3[vertexCount];
+            uvs = new Vector2[vertexCount];
+            indices = new int[triCount * 3];
+            endEdge = new Vector3[heightmap.width];
+
+            for (var i = 0; i < vertexCount; i++)
+            {
+                int column = i % heightmap.width;
+                int row = i / heightmap.width;
+                if (inputEdge != null && row==0)
+                {
+                    vertices[i] = inputEdge[i];
+                    vertices[i].x = column * segmentWidth;
+                    vertices[i].z = row * segmentLength;
+                }
+                else
+                {
+                    vertices[i].x = column * segmentWidth;
+                    vertices[i].y = heightmap.GetPixel(column, row).r * heightMultiplier;
+                    vertices[i].z = row * segmentLength;
+                    vertices[i] += startPos;
+                    if(row == heightmap.height-1)
+                    {
+                        //end line
+                        endEdge[column] = vertices[i];
+                    }
+                }     
+
+                uvs[i].x = (float)column / (float)(heightmap.width - 1);
+                uvs[i].y = (float)row / (float)(heightmap.height - 1);
+            }
+            int index = 0;
+            int vertexIndex = 0;
+
+            //triangles
+            for (int i = 0; i < heightmap.height - 1; i++)
+            {
+                for (int j = 0; j < heightmap.width - 1; j++)
+                {
+                    vertexIndex = i * heightmap.width + j;
+                    indices[index++] = vertexIndex;
+                    indices[index++] = vertexIndex + heightmap.width;
+                    indices[index++] = vertexIndex + 1;
+
+                    indices[index++] = vertexIndex + 1;
+                    indices[index++] = vertexIndex + heightmap.width;
+                    indices[index++] = vertexIndex + heightmap.width + 1;
+
+                }
+            }
+
+            m.vertices = vertices;
+            m.uv = uvs;
+            m.triangles = indices;
+            m.RecalculateNormals();
+
+            return m;
+        }
+        public static Mesh CreateMeshOnBezierFromHeightmap(Texture2D heightmap, Base.Curves.ICurve usedCurve, float segmentWidth = 1, float heightMultiplier = 1, string meshName = "CurvedHeightMap")
         {
             Mesh m = new Mesh();
             m.name = meshName;
@@ -146,20 +216,27 @@ namespace Base.Procedural.Creator
             uvs = new Vector2[vertexCount];
             indices = new int[triCount * 3];
 
+            //for loop
+            float mapWidth = heightmap.width * segmentWidth;
             float timeCurve = 0;
+            Vector3 centerPos = Vector3.zero;
+            Quaternion curveOrientation = Quaternion.identity;
+            Vector3 currentPos = Vector3.zero;
+
             for (var i = 0; i < vertexCount; i++)
             {
                 int column = i % heightmap.width;
                 int row = i / heightmap.width;
                 timeCurve = ((float)(i / heightmap.width)) / heightmap.height;
-                if (meshOnCurve != null)
-                {
-                    Vector3 centerPos=meshOnCurve.getPointOnCurve(timeCurve);
-                    Quaternion curveOrientation = meshOnCurve.getCurveOrientationAt(timeCurve);
-                }
-                vertices[i].x = column * segmentWidth;
-                vertices[i].y = heightmap.GetPixel(column, row).r * heightMultiplier;
-                vertices[i].z = row * segmentLength;
+
+                centerPos = usedCurve.getPointOnCurve(timeCurve);
+                curveOrientation = usedCurve.getCurveOrientationAt(timeCurve);
+                Vector3 directionRight = curveOrientation * Vector3.right;
+                Vector3 directionUp = curveOrientation * Vector3.up;
+                currentPos = centerPos + directionRight * (column * segmentWidth) - directionRight * mapWidth * 0.5f;
+                float heightOffset = heightmap.GetPixel(column, row).r * heightMultiplier;
+                currentPos += directionUp * heightOffset;
+                vertices[i] = currentPos;
                 uvs[i].x = (float)column / (float)(heightmap.width - 1);
                 uvs[i].y = (float)row / (float)(heightmap.height - 1);
             }
