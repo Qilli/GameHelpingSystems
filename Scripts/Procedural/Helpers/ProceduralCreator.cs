@@ -256,7 +256,6 @@ namespace Base.Procedural.Creator
                     indices[index++] = vertexIndex + 1;
                     indices[index++] = vertexIndex + heightmap.width;
                     indices[index++] = vertexIndex + heightmap.width + 1;
-
                 }
             }
 
@@ -267,7 +266,21 @@ namespace Base.Procedural.Creator
 
             return m;
         }
-      //  public static Mesh[] createPlanesMeshOnSpline(Base.Curves.ICurve)
+        public static Mesh[] createPlanesMeshOnSpline(Base.Curves.ICurve usedCurve,int segmentsCount,float segmentWidth,int segmentsCountLength,int segmentsCountWidth,string meshName="MesName")
+        {
+            Mesh[] meshes = new Mesh[segmentsCount];
+            float timer = 0;
+            for (int i = 0; i < segmentsCount; i++)
+            {
+                Mesh mesh = new Mesh();
+                mesh.name = meshName + "_" + i.ToString();
+                float timeOffset = 1.0f / segmentsCount;
+                CreateMeshOnCurveFragment(ref mesh, usedCurve, timer, timer + timeOffset, segmentWidth, segmentsCountWidth, segmentsCountLength);
+                meshes[i] = mesh;
+                timer += timeOffset;
+            }
+            return meshes;
+        }
         private static Vector3 getUnitVectorByAngle(float angRad)
         {
             return new Vector3(Mathf.Cos(angRad), 0, Mathf.Sin(angRad));
@@ -276,5 +289,66 @@ namespace Base.Procedural.Creator
         {
             return translation + rot * inVec;
         }
+        private static void CreateMeshOnCurveFragment(ref Mesh m,Base.Curves.ICurve curve,float start,float end,float segmentWidth,int segmentsWidthCount,int segmentsHeightCount)
+        {
+            Vector3[] vertices = null;
+            Vector2[] uvs = null;
+            int[] indices = null;
+            int vertexCount = 0;
+            int triCount = 0;
+
+            vertexCount = segmentsWidthCount * segmentsHeightCount;
+            triCount = (segmentsWidthCount - 1) * (segmentsHeightCount - 1) * 2;
+            vertices = new Vector3[vertexCount];
+            uvs = new Vector2[vertexCount];
+            indices = new int[triCount * 3];
+
+            //for loop
+            float mapWidth = segmentsWidthCount * segmentWidth;
+            float timeCurve = 0;
+            Vector3 centerPos = Vector3.zero;
+            Quaternion curveOrientation = Quaternion.identity;
+            Vector3 currentPos = Vector3.zero;
+
+            for (var i = 0; i < vertexCount; i++)
+            {
+                int column = i % segmentsWidthCount;
+                int row = i / segmentsWidthCount;
+                float offset = ((float)row / (segmentsHeightCount-1));
+                timeCurve =start+offset*(end-start);
+                centerPos = curve.getPointOnCurve(timeCurve);
+                curveOrientation = curve.getCurveOrientationAt(timeCurve);
+                Vector3 directionRight = curveOrientation * Vector3.right;
+                currentPos = centerPos + directionRight * (column * segmentWidth) - directionRight * mapWidth * 0.5f;
+                vertices[i] = currentPos;
+                uvs[i].x = (float)column / (float)(segmentsWidthCount - 1);
+                uvs[i].y = (float)row / (float)(segmentsHeightCount - 1);
+            }
+            int index = 0;
+            int vertexIndex = 0;
+
+            //triangles
+            for (int i = 0; i < segmentsHeightCount - 1; i++)
+            {
+                for (int j = 0; j < segmentsWidthCount - 1; j++)
+                {
+                    vertexIndex = i * segmentsWidthCount + j;
+                    indices[index++] = vertexIndex;
+                    indices[index++] = vertexIndex + segmentsWidthCount;
+                    indices[index++] = vertexIndex + 1;
+
+                    indices[index++] = vertexIndex + 1;
+                    indices[index++] = vertexIndex + segmentsWidthCount;
+                    indices[index++] = vertexIndex + segmentsWidthCount + 1;
+
+                }
+            }
+
+            m.vertices = vertices;
+            m.uv = uvs;
+            m.triangles = indices;
+            m.RecalculateNormals();
+        }
+
     }
 }
