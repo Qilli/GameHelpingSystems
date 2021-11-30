@@ -13,7 +13,7 @@ namespace Base.Editor
             public static float positionMultiplier = 5.0f;
             public static Vector2 shuffleParameter = new Vector2(12.9898f, 78.233f);
             public static float randomMultiplier = 43758.5453123f;
-            static public float simpleNoise(Texture2D tex, int x,int y)
+            static public float SimpleNoise(Texture2D tex, int x,int y)
             {
                 float xF = widthTo01(tex,x)*positionMultiplier;
                 float yF = heightTo01(tex,y)*positionMultiplier;
@@ -22,13 +22,18 @@ namespace Base.Editor
                 float a = random(i);
                 float b = random(i+right);
                 float c = random(i+up);
-                float d = random(i+ diagonalUp);
+                float d = random(i+diagonalUp);
 
                 //cubioc hermine curve
                 Vector2 u = (f * f)*new Vector2(3.0f - 2.0f* f.x,3.0f - 2.0f * f.y);
                 return Mathf.Lerp(a, b, u.x) + (c - a) * u.y * (1.0f - u.x) + (d - b) * u.x * u.y;
             }
-
+            public static float PerlinNoise(float x, float y,float scaling)
+            {
+                x /= scaling;
+                y /= scaling;
+                return Mathf.PerlinNoise(x, y);
+            }
             static public float widthTo01(Texture2D tex, int x)
             {
                 float temp = x;
@@ -95,6 +100,12 @@ namespace Base.Editor
             }
             #endregion
         }
+        [System.Serializable]
+        private enum NoiseType
+        {
+            Custom,
+            Perlin
+        }
 
 
         [MenuItem("Window/Noise Generator")]
@@ -109,6 +120,8 @@ namespace Base.Editor
         private float positionMultiplier = 5.0f;
         private  Vector2 shuffleParameter = new Vector2(12.9898f, 78.233f);
         private  float randomMultiplier = 43758.5453123f;
+        private NoiseType noiseType= NoiseType.Perlin;
+        private float perlinScaling = 1.0f;
 
         private void createTexture()
         {
@@ -120,7 +133,7 @@ namespace Base.Editor
             {
                 for (int y = 0; y < (int)texSize.y; ++y)
                 {
-                    float resColor = NoiseHelper.simpleNoise(noiseTexture,x,y);
+                    float resColor =noiseType== NoiseType.Perlin?NoiseHelper.PerlinNoise(x, y,perlinScaling):NoiseHelper.SimpleNoise(noiseTexture,x,y);
                     noiseTexture.SetPixel(x, y
                         , new Color(resColor,resColor,resColor));
                 }
@@ -133,9 +146,17 @@ namespace Base.Editor
             GUILayout.BeginVertical();
             GUILayout.BeginVertical();
             texSize = EditorGUILayout.Vector2Field("Texture Size:", texSize);
-            positionMultiplier = EditorGUILayout.Slider(positionMultiplier,0.0f,100.0f);
-            shuffleParameter = EditorGUILayout.Vector2Field("Shuffle Multiplier: ", shuffleParameter);
-            randomMultiplier = EditorGUILayout.FloatField("Random Multiplier: ", randomMultiplier);
+            noiseType =(NoiseType) EditorGUILayout.EnumFlagsField(noiseType);
+            if (noiseType == NoiseType.Custom)
+            {
+                positionMultiplier = EditorGUILayout.Slider(positionMultiplier, 0.0f, 100.0f);
+                shuffleParameter = EditorGUILayout.Vector2Field("Shuffle Multiplier: ", shuffleParameter);
+                randomMultiplier = EditorGUILayout.FloatField("Random Multiplier: ", randomMultiplier);
+            }
+            else
+            {
+                perlinScaling = EditorGUILayout.FloatField("Perlin Scaling: ", perlinScaling);
+            }
 
             if (GUILayout.Button("Generate"))
             {
