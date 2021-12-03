@@ -52,7 +52,7 @@ namespace Base.ObjectsControl
             }
         }
 
-
+//ponowy komentarz testowy
         public virtual void init()
         {
 
