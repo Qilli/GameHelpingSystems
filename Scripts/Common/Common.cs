@@ -19,6 +19,20 @@ namespace Base.CommonCode
             FORCE
         }
 
+        public static Texture2D createTexture(int width,int height,TextureFormat format= TextureFormat.RGB24, bool mipmaps=false,Color fillColor=new Color())
+        {
+            Texture2D newTexture = new Texture2D(width, height, format, mipmaps);
+            for (int i = 0; i < width; i++)
+            {
+                for (int j = 0; j < height; j++)
+                {
+                    newTexture.SetPixel(i, j, fillColor);
+                }
+            }
+            newTexture.Apply();
+            return newTexture;
+        }
+
 
         public static List<T> FindAssetsByType<T>() where T : UnityEngine.Object
         {

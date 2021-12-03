@@ -12,7 +12,7 @@ namespace Base.CommonCode.MathHelpers
         public static float Remap(float a,float b, float targetA,float targetB,float value)
         {
             float invLerp = InverseLerp(a, b, value);
-            return Mathf.Lerp(targetA, targetB, value);
+            return Mathf.Lerp(targetA, targetB, invLerp);
         }
     }
 }
