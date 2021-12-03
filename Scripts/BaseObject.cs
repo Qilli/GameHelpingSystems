@@ -13,6 +13,7 @@ namespace Base.ObjectsControl
         WORKING
     }
     //testowy komentarz na main
+    //kolejny testowy komentarz
     public class BaseObject : MonoBehaviour, IComparable
     {
         [SerializeField]
