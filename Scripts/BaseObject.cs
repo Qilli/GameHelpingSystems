@@ -6,7 +6,7 @@ using System;
 //test comment to check if i can merge another branch into main
 namespace Base.ObjectsControl
 {
-
+//kolejny dziwny komentarz testowy
     public enum ObjectState
     {
         PAUSED,
