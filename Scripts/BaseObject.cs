@@ -51,7 +51,7 @@ namespace Base.ObjectsControl
                 mgr.listeners.removeListener(this);
             }
         }
-
+//KOMENTARZ Z CAPSLOCKIEM
 //ponowy komentarz testowy
         public virtual void init()
         {
