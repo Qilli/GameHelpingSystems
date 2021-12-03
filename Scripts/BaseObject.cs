@@ -13,6 +13,7 @@ namespace Base.ObjectsControl
         WORKING
     }
     //testowy komentarz na main
+    //kolejny testowy komentarz
     public class BaseObject : MonoBehaviour, IComparable
     {
         [SerializeField]
@@ -50,8 +51,8 @@ namespace Base.ObjectsControl
                 mgr.listeners.removeListener(this);
             }
         }
-
-
+//KOMENTARZ Z CAPSLOCKIEM
+//ponowy komentarz testowy
         public virtual void init()
         {
 
