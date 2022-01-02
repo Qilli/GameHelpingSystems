@@ -4,38 +4,46 @@ namespace Base.Procedural.NoiseHelpers
 {
     public class Noise
     {
-        public static Texture2D CreateNoiseTexture(int width, int height,int seed, float scaling, int octaves, float lacunarity, float persistance,Vector2 offset)
+        public static Texture2D CreateNoiseTexture(int width, int height, int seed, float scaling, int octaves, float lacunarity, float persistance, Vector2 offset)
         {
             Texture2D noiseTexture = new Texture2D(width, height, TextureFormat.RGB24, false);
-            FillTextureWithPerlinNoise(noiseTexture, seed,scaling, octaves, lacunarity, persistance,offset);
+            FillTextureWithPerlinNoise(noiseTexture, seed, scaling, octaves, lacunarity, persistance, offset);
             return noiseTexture;
         }
 
-        public static void FillTextureWithPerlinNoise(Texture2D tex,int seed, float scaling, int octaves, float lacunarity, float persistance,Vector2 offset)
+        public static void fillTextureWithNoiseData(Texture2D noiseTexture, float[,] noiseData)
         {
-            int width = tex.width;
-            int height = tex.height;
-            float[,] map = GetPerlinNoiseMap(width, height,seed, scaling, octaves, lacunarity, persistance,offset);
+            int width = noiseTexture.width;
+            int height = noiseTexture.height;
             for (int x = 0; x < width; ++x)
             {
                 for (int y = 0; y < height; ++y)
                 {
-                    Color resColor = Color.Lerp(Color.black, Color.white, map[x, y]);
-                    tex.SetPixel(x, y, resColor);
+                    Color resColor = Color.Lerp(Color.black, Color.white, noiseData[x, y]);
+                    noiseTexture.SetPixel(x, y, resColor);
                 }
             }
-            tex.Apply();
+            noiseTexture.Apply();
         }
 
-        public static float[,] GetPerlinNoiseMap(int width, int height,int seed, float scaling, int octaves, float lacunarity, float persistance,Vector2 offset)
+
+        public static void FillTextureWithPerlinNoise(Texture2D tex, int seed, float scaling, int octaves, float lacunarity, float persistance, Vector2 offset)
+        {
+            int width = tex.width;
+            int height = tex.height;
+            float[,] map = GetPerlinNoiseMap(width, height, seed, scaling, octaves, lacunarity, persistance, offset);
+            fillTextureWithNoiseData(tex, map);     
+        }
+
+        public static float[,] GetPerlinNoiseMap(int width, int height, int seed, float scaling, int octaves, float lacunarity, float persistance, Vector2 offset)
         {
             float[,] perlinMap = new float[width, height];
             System.Random rng = new System.Random(seed);
             Vector2[] octavesRandom = new Vector2[octaves];
             for (int i = 0; i < octaves; i++)
             {
-                octavesRandom[i].x = rng.Next(-100000,100000)+offset.x;
-                octavesRandom[i].x = rng.Next(-100000, 100000)+offset.y;
+                octavesRandom[i].x = rng.Next(-100000, 100000) + offset.x;
+                octavesRandom[i].y = rng.Next(-100000, 100000) + offset.y;
             }
 
             float heightOffset = height / 2.0f;
@@ -52,7 +60,7 @@ namespace Base.Procedural.NoiseHelpers
                     float heightValue = 0;
                     for (int a = 0; a < octaves; a++)
                     {
-                        heightValue += (PerlinNoise(x-widthOffset, y-heightOffset, frequency, scaling,octavesRandom[a]) * 2.0f - 0.5f) * amplitude;
+                        heightValue += (PerlinNoise(x - widthOffset, y - heightOffset, frequency, scaling, octavesRandom[a])* 2.0f - 0.5f) * amplitude;
                         frequency *= lacunarity;
                         amplitude *= persistance;
                     }
@@ -73,10 +81,10 @@ namespace Base.Procedural.NoiseHelpers
             return perlinMap;
         }
 
-        public static float PerlinNoise(float x, float y, float frequency, float scaling,Vector2 offset)
+        public static float PerlinNoise(float x, float y, float frequency, float scaling, Vector2 offset)
         {
-            x = (x / scaling) * frequency +offset.x;
-            y = (y / scaling) * frequency +offset.y;
+            x = (x / scaling) * frequency + offset.x;
+            y = (y / scaling) * frequency + offset.y;
             return Mathf.PerlinNoise(x, y);
         }
 
