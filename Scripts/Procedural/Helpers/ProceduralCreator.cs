@@ -130,7 +130,7 @@ namespace Base.Procedural.Creator
             m.uv = uvs;
             return m;
         }
-        public static Mesh CreateMeshFromHeightMap(Texture2D heightmap,in Vector3 startPos,in Vector3[] inputEdge,out Vector3[] endEdge, float segmentWidth = 1, float segmentLength = 1, float heightMultiplier = 1, string meshName = "HeightmapMesh")
+        public static Mesh CreateMeshFromHeightMap(Texture2D heightmap, in Vector3 startPos, in Vector3[] inputEdge, out Vector3[] endEdge, float segmentWidth = 1, float segmentLength = 1, float heightMultiplier = 1, string meshName = "HeightmapMesh")
         {
             Mesh m = new Mesh();
             m.name = meshName;
@@ -151,7 +151,7 @@ namespace Base.Procedural.Creator
             {
                 int column = i % heightmap.width;
                 int row = i / heightmap.width;
-                if (inputEdge != null && row==0)
+                if (inputEdge != null && row == 0)
                 {
                     vertices[i] = inputEdge[i];
                     vertices[i].x = column * segmentWidth;
@@ -163,12 +163,12 @@ namespace Base.Procedural.Creator
                     vertices[i].y = heightmap.GetPixel(column, row).r * heightMultiplier;
                     vertices[i].z = row * segmentLength;
                     vertices[i] += startPos;
-                    if(row == heightmap.height-1)
+                    if (row == heightmap.height - 1)
                     {
                         //end line
                         endEdge[column] = vertices[i];
                     }
-                }     
+                }
 
                 uvs[i].x = (float)column / (float)(heightmap.width - 1);
                 uvs[i].y = (float)row / (float)(heightmap.height - 1);
@@ -199,6 +199,49 @@ namespace Base.Procedural.Creator
             m.RecalculateNormals();
 
             return m;
+        }
+        public static MeshHelper.MeshData CreateMeshDataFromHeightMap(float[,] heightmap,in int LOD, in Vector3 startPos, float heightMultiplier,AnimationCurve heightMultiplierCurve, float oneTileSize)
+        {
+            int width = heightmap.GetLength(0);
+            int height = heightmap.GetLength(1);
+            int lod = LOD == 0 ? 1 : LOD * 2;
+            int verticesPerLine = ((heightmap.GetLength(0)-1) / lod)+1;
+            MeshHelper.MeshData meshData = new MeshHelper.MeshData(verticesPerLine, verticesPerLine);
+
+            int vertexCount = verticesPerLine * verticesPerLine;
+            int triCount = (verticesPerLine - 1) * (verticesPerLine - 1) * 2;
+            int i = 0;
+            for (int row = 0; row < height; row+=lod)
+            {
+                for (int column = 0; column <width; column+=lod)
+                {
+                    //set vertex
+                    meshData.setPosition(i, new Vector3(startPos.x + column * oneTileSize, startPos.y + heightmap[column, row] * heightMultiplier * heightMultiplierCurve.Evaluate(heightmap[column, row]),
+                        startPos.z + row * oneTileSize));
+                    //set normal
+                    meshData.setNormal(i, Vector3.up);
+                    //set uv
+                    meshData.setUV(i, new Vector2(column / (float)width, row / (float)height));
+                    i++;
+                }
+            }
+            //set triangles
+            int triangleIndex = 0;
+            for (int heightIndex = 0; heightIndex < verticesPerLine - 1; heightIndex++)
+            {
+                for (int widthIndex = 0; widthIndex < verticesPerLine - 1; widthIndex++)
+                {
+                    //tri 1
+                    meshData.setTriangleIndex(triangleIndex++, widthIndex + heightIndex * verticesPerLine);
+                    meshData.setTriangleIndex(triangleIndex++, widthIndex + (heightIndex + 1) * verticesPerLine);
+                    meshData.setTriangleIndex(triangleIndex++, widthIndex + (heightIndex + 1) * verticesPerLine + 1);
+                    //tri 2
+                    meshData.setTriangleIndex(triangleIndex++, widthIndex + heightIndex * verticesPerLine);
+                    meshData.setTriangleIndex(triangleIndex++, widthIndex + (heightIndex + 1) * verticesPerLine + 1);
+                    meshData.setTriangleIndex(triangleIndex++, widthIndex + +heightIndex * verticesPerLine + 1);
+                }
+            }
+            return meshData;
         }
         public static Mesh CreateMeshOnBezierFromHeightmap(Texture2D heightmap, Base.Curves.ICurve usedCurve, float segmentWidth = 1, float heightMultiplier = 1, string meshName = "CurvedHeightMap")
         {
@@ -266,7 +309,7 @@ namespace Base.Procedural.Creator
 
             return m;
         }
-        public static Mesh[] createPlanesMeshOnSpline(Base.Curves.ICurve usedCurve,int segmentsCount,float segmentWidth,int segmentsCountLength,int segmentsCountWidth,string meshName="MesName")
+        public static Mesh[] createPlanesMeshOnSpline(Base.Curves.ICurve usedCurve, int segmentsCount, float segmentWidth, int segmentsCountLength, int segmentsCountWidth, string meshName = "MesName")
         {
             Mesh[] meshes = new Mesh[segmentsCount];
             float timer = 0;
@@ -289,7 +332,7 @@ namespace Base.Procedural.Creator
         {
             return translation + rot * inVec;
         }
-        private static void CreateMeshOnCurveFragment(ref Mesh m,Base.Curves.ICurve curve,float start,float end,float segmentWidth,int segmentsWidthCount,int segmentsHeightCount)
+        private static void CreateMeshOnCurveFragment(ref Mesh m, Base.Curves.ICurve curve, float start, float end, float segmentWidth, int segmentsWidthCount, int segmentsHeightCount)
         {
             Vector3[] vertices = null;
             Vector2[] uvs = null;
@@ -314,8 +357,8 @@ namespace Base.Procedural.Creator
             {
                 int column = i % segmentsWidthCount;
                 int row = i / segmentsWidthCount;
-                float offset = ((float)row / (segmentsHeightCount-1));
-                timeCurve =start+offset*(end-start);
+                float offset = ((float)row / (segmentsHeightCount - 1));
+                timeCurve = start + offset * (end - start);
                 centerPos = curve.getPointOnCurve(timeCurve);
                 curveOrientation = curve.getCurveOrientationAt(timeCurve);
                 Vector3 directionRight = curveOrientation * Vector3.right;

@@ -401,7 +401,7 @@ namespace Base.Cameras
         {
             return;
             //now check pan
-            cameraTransform.position = cameraPosition;
+        /*    cameraTransform.position = cameraPosition;
             bool canDo = true;
             //sprawdzamy czy wszystkie punkty sa w zakresie rozmiaru świata gry
             Vector2 bottomLeft = usedCamera.ViewportToWorldPoint(bottomLeftConst);
@@ -471,7 +471,7 @@ namespace Base.Cameras
                 offset = getOffsetFor(bottomRight);
                 cameraTransform.position += offset;
             }
-
+*/
             //    cameraPosition = cameraTransform.position;
         }
 
